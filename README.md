@@ -1,4 +1,4 @@
-# SIMPLE processor
+# SIMPLE Processor
 
 ## 参加者
 
