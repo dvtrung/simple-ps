@@ -1,0 +1,29 @@
+`include "./helper/header.vt"
+`include "../modules/multiplexer.v"
+
+module multiplexer_test();
+  reg clock;
+  reg x, t, f;
+  reg [2:0] sum;
+  
+  wire res;
+  multiplexer multiplexer_(
+     .x(x),.t(t), .f(f),
+    .res(res)
+  );
+  
+  initial begin
+    clock <= 0;
+    sum <= 0;
+    # 1000
+    $display("TEST FINSHED in %m");
+    $finish();
+  end
+  
+  always begin
+    #10
+    clock <= ~clock;
+    sum = sum + 1;
+    {x, t, f} = sum;
+  end
+endmodule
