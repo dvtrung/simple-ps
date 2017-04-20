@@ -14,9 +14,9 @@ module shifter_test();
   );
   
   initial begin
-    a = 16'b0000000000000000;
-    d = 4'b0000;
-    op = 2'b00;
+    a = 16'b0;
+    d = 4'b0;
+    op = 2'b0;
     # 100
     $display("TEST FINSHED in %m");
     $finish();

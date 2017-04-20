@@ -17,7 +17,7 @@ module shifter_test();
     a = 16'b0000000000000000;
     d = 4'b0000;
     op = 2'b00;
-    # 1000
+    # 100
     $display("TEST FINSHED in %m");
     $finish();
   end
