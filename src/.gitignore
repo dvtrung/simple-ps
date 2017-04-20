@@ -1,7 +1,9 @@
 *.bak
 *.bak?
 *.bak??
+*.ver
 /db/
 /incremental_db/
 /simulation/
 /output_files/
+greybox_tmp
