@@ -1,0 +1,33 @@
+`include "./helper/header.vt"
+`include "../devices/ram_inc.v"
+
+module ram_inc_test();
+  reg clock;
+  
+  reg [15:0] data;
+  reg wren;
+  reg [11:0] addr;
+  
+  wire [15:0] res;
+  ram_inc ram_inc_(
+    .data(data), .wren(wren), .address(addr),
+    .clock(clock),
+    .q(res)
+  );
+  
+  initial begin
+    clock <= 0;
+    addr <= 0;
+    wren <= 0;
+    data <= 30;
+    # 1000
+    $display("TEST FINSHED in %m");
+    $finish();
+  end
+  
+  always begin
+    #10
+    clock <= ~clock;
+    addr <= addr + 1;
+  end
+endmodule
