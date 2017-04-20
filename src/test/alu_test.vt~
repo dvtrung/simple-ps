@@ -3,9 +3,10 @@
 
 module alu_test();
   reg clock;
-  reg [15:0] a, b, res;
+  reg [15:0] a, b;
   reg [3:0] op;
-  
+ 
+  wire [15:0] res;
   alu alu_(
      .a(a), .b(b), .op(op),
     .res(res)

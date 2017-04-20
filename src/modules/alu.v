@@ -5,8 +5,13 @@ module alu(
   );
   
   always @(a, b, op) begin
-	case (op)
-	  3'b0000: res = a + b;
-	endcase
+    case (op)
+      4'b0000: res = a + b;
+      4'b0001: res = a - b;
+      4'b0010: res = a & b;
+      4'b0011: res = a | b;
+      4'b0100: res = a ^ b;
+      4'b0110: res = a;
+    endcase
   end
 endmodule
