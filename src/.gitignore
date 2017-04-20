@@ -2,6 +2,7 @@
 *.bak?
 *.bak??
 *~
+*.rpt
 /db/
 /incremental_db/
 /simulation/
