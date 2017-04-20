@@ -1,0 +1,25 @@
+`timescale 1 ns/ 1 ps
+`include "./helper/assert.vt"
+`include "../hardware.v"
+
+module hardware_test();
+  reg clock;
+  
+  wire res;
+  hardware hardware_(
+    .clock(clock),
+    .led(res)
+  );
+  
+  initial begin
+    clock = 0;
+    # 1000
+    $display("TEST FINSHED in %m");
+    $finish();
+  end
+  
+  always begin
+    #10
+    clock <= ~clock;
+  end
+endmodule
