@@ -1,3 +1,6 @@
 *.bak
 *.bak?
 *.bak??
+/db/
+/incremental_db/
+/simulation/
