@@ -39,7 +39,6 @@ module processor(
   end
   
   ////// P2
-
   wire [15:0] o_ar, o_br;
   reg [15:0] mdr;
   wire [15:0] written;
@@ -71,16 +70,25 @@ module processor(
     .res(alu_res));
   
   wire [15:0] shifter_res;
-  reg [1:0] shifter_op;
   shifter shifter_(
-    .a(ar), .d(sd), .op(shifter_op),
+    .a(br), .d(sd), .op(op),
     .res(shifter_res));
   
-  wire [15:0] o_dr = 1 ? alu_res : shifter_res;
+  function [15:0] func_dr;
+    input [3:0] op;
+  begin
+    case (op[3:2])
+      2'b00: func_dr = alu_res;
+      2'b01: func_dr = alu_res;
+      2'b10: func_dr = shifter_res;
+      // TODO:OTHER
+    endcase
+  end
+  endfunction
   
   reg [15:0] dr;
   always @(posedge phase_bus[2]) begin
-    dr <= o_dr;
+    dr <= func_dr(op);
   end
   
   ////// P4
@@ -93,5 +101,4 @@ module processor(
   assign written = 1 ? dr : mdr;
   always @(posedge phase_bus[4]) begin
   end
-
 endmodule

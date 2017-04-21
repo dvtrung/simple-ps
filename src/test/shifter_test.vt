@@ -5,7 +5,7 @@ module shifter_test();
   reg clock;
   reg [15:0] a;
   reg [3:0] d;
-  reg [1:0] op;
+  reg [3:0] op;
  
   wire [15:0] res;
   shifter shifter_(
@@ -24,17 +24,17 @@ module shifter_test();
   
   always begin
     #20
-    op = 2'b00;
+    op = 2'b1000;
     a = 16'b0100100010001001;
     d = 4'b0110;
 
     #20
-    op = 2'b01;
+    op = 4'b1001;
 
     #20
-    op = 2'b10;
+    op = 4'b1010;
 
     #20
-    op = 2'b11;
+    op = 4'b1011;
   end
 endmodule
