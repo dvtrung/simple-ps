@@ -1,0 +1,31 @@
+`include "./helper/header.vt"
+`include "../modules/processor.v"
+`include "../modules/controller.v"
+`include "../modules/alu.v"
+`include "../modules/shifter.v"
+`include "../modules/register.v"
+module processor_test();
+
+  reg clock, reset;
+  reg [15:0] m_q;
+
+  processor processor_(
+    .clock(clock), .reset(reset),
+    .m_q(m_q)
+  );
+ 
+  initial begin
+    clock <= 0;
+    reset <= 1;
+    # 40
+    reset <= 0;
+    m_q <= 16'b11_011_001_0000_0000;
+    # 10000
+    $finish();
+  end
+
+  always begin
+    # 10
+    clock <= ~clock;
+  end
+endmodule

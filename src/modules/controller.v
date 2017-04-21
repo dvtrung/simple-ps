@@ -12,10 +12,11 @@ module controller(
       phase <= 0;
     end
     phase_bus <= {
-      phase == 0,
-      phase == 1,
-      phase == 2,
+      phase == 4,
       phase == 3,
-      phase == 4};
+      phase == 2,
+      phase == 1,
+      phase == 0};
+    reset_ps <= reset; // TODO: ONESHOT
   end
 endmodule

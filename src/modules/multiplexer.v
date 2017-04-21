@@ -5,3 +5,4 @@ module multiplexer(
   
   assign res = (t & x) || (f & (~x));
 endmodule
+
