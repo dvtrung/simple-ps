@@ -1,7 +1,11 @@
 *.bak
 *.bak?
 *.bak??
+*~
+*.rpt
+*.ver
 /db/
 /incremental_db/
 /simulation/
 /output_files/
+greybox_tmp
