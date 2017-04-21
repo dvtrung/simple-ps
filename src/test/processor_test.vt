@@ -1,5 +1,4 @@
 `include "./helper/header.vt"
-`include "./helper/mock_ram.v"
 `include "../modules/processor.v"
 `include "../modules/controller.v"
 `include "../modules/alu.v"
