@@ -1,0 +1,35 @@
+`include "./helper/header.vt"
+`include "../modules/register.v"
+
+module register_test();
+  reg clock;
+  reg [2:0] ra, rb;
+  wire [15:0] ar, br;
+  wire [16 * 8 - 1 : 0] regi;
+
+  register register_(
+    .clock(clock), .ra(ra), .rb(rb),
+    .ar(ar), .br(br)
+  );
+
+  assign regi = register_.register;
+
+  initial begin
+    clock <= 0;
+    ra <= 3'd0;
+    rb <= 3'd1;
+    # 1000
+    $display("TEST FINSHED in %m");
+    $finish();
+  end
+
+  always begin
+    #20
+    clock <= ~ clock;
+  end
+
+  always @(posedge clock) begin
+    ra <= ra + 3'd1;
+    rb <= rb + 3'd1;
+  end
+endmodule
