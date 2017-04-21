@@ -8,7 +8,7 @@ module register (
 
   reg [15:0] r [0:7];
   integer i;
-  
+
   always @(posedge clock or negedge reset) begin
     if (reset) begin
       for (i = 0; i < 8 ; i = i + 1)
@@ -19,7 +19,7 @@ module register (
       r[rb] = data;
     end
   end
-  
+
   assign ar = r[ra];
   assign br = r[rb];
 endmodule

@@ -36,7 +36,8 @@
 // synopsys translate_off
 `timescale 1 ps / 1 ps
 // synopsys translate_on
-module ram_inc (
+module ram_inc #(
+  parameter filename)(
 	address,
 	clock,
 	data,
@@ -86,7 +87,7 @@ module ram_inc (
 	defparam
 		altsyncram_component.clock_enable_input_a = "BYPASS",
 		altsyncram_component.clock_enable_output_a = "BYPASS",
-		altsyncram_component.init_file = "../../memories/memory_inc.mif",
+		altsyncram_component.init_file = filename, //"../../memories/memory_inc.mif",
 		altsyncram_component.intended_device_family = "Cyclone IV E",
 		altsyncram_component.lpm_hint = "ENABLE_RUNTIME_MOD=YES,INSTANCE_NAME=NONE",
 		altsyncram_component.lpm_type = "altsyncram",
