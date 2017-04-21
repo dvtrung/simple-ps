@@ -40,9 +40,9 @@ module processor(
 
   wire [15:0] o_ar, o_br;
   register register_(
-    .clock(phase_bus[1] | phase_bus[4]),
+    .clock(phase_bus[1] | phase_bus[4]), .reset(reset),
     .ra(rs), .rb(rd),
-    .wren(0), .data(mdr),
+    .write(0), .data(mdr),
     .ar(o_ar), .br(o_br));
 
   ////// P3

@@ -2,23 +2,29 @@
 `include "../modules/register.v"
 
 module register_test();
-  reg clock;
+  reg clock, reset;
   reg [2:0] ra, rb;
+  reg [15:0] counter;
+  reg [15:0] data;
   wire [15:0] ar, br;
-  wire [16 * 8 - 1 : 0] regi;
 
+  reg write;
   register register_(
-    .clock(clock), .ra(ra), .rb(rb),
+    .clock(clock), .reset(reset), .ra(ra), .rb(rb),
+    .write(write), .data(data),
     .ar(ar), .br(br)
   );
-
-  assign regi = register_.register;
 
   initial begin
     clock <= 0;
     ra <= 3'd0;
     rb <= 3'd1;
-    # 1000
+    write <= 0;
+    reset <= 1;
+    counter <= 0;
+    #100
+    reset <= 0;
+    #1000
     $display("TEST FINSHED in %m");
     $finish();
   end
@@ -31,5 +37,8 @@ module register_test();
   always @(posedge clock) begin
     ra <= ra + 3'd1;
     rb <= rb + 3'd1;
+    counter <= counter + 1;
+    write <= (counter % 5 == 0);
+    data <= counter;
   end
 endmodule
