@@ -1,0 +1,51 @@
+`include "./helper/header.vt"
+`include "../modules/out.v"
+`include "../modules/seg7.v"
+
+module out_test();
+  reg clock, reset;
+  
+  reg [15:0] outvalA;
+  reg [15:0] outvalB;
+  reg [15:0] outvalC;
+  reg [15:0] outvalD;
+  reg [15:0] outvalE;
+  reg [15:0] outvalF;
+  reg [15:0] outvalG;
+  reg [15:0] outvalH;
+  
+  reg [2:0] sel;
+  
+  wire [7:0] led0;
+  wire [7:0] led1;
+  wire [7:0] led2;
+  wire [7:0] led3;
+  wire [7:0] led4;
+  wire [7:0] led5;
+  wire [7:0] led6;
+  wire [7:0] led7;
+  
+  wire [7:0] seg_sel;
+
+  out out_(
+    .clock(clock), .reset(reset),
+    //.sel(sel),
+    .led0(led0), .led1(led1), .led2(led2), .led3(led3), .led4(led4), .led5(led5), .led6(led6), .led7(led7), 
+    .seg_sel(seg_sel)
+  );
+  
+  initial begin
+    //outvalA = 16'b0101111010111010;
+
+    clock = 0; reset = 1;
+    forever begin #5 clock = ~clock; end
+
+    # 1000
+    $display("TEST FINSHED in %m");
+    $finish();
+  end
+  
+  always begin
+
+  end
+endmodule
