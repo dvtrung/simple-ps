@@ -6,22 +6,26 @@ module controller(
   );
   
   initial phase <= 3'd0;
-  always @(posedge clock) begin
+  always @(clock) begin
     if(reset) begin
       phase <= 0;
       phase_bus <= 5'd4;
     end else begin
-      if(phase >= 4) begin
-        phase <= 0;
+      if(clock) begin
+        if(phase >= 4) begin
+          phase <= 0;
+        end else begin
+          phase <= phase + 3'd1;
+        end
+        phase_bus <= {
+          phase == 4,
+          phase == 3,
+          phase == 2,
+          phase == 1,
+          phase == 0};
       end else begin
-        phase <= phase + 3'd1;
+        phase_bus <= 5'd0;
       end
-      phase_bus <= {
-        phase == 4,
-        phase == 3,
-        phase == 2,
-        phase == 1,
-        phase == 0};
     end
     
     reset_ps <= reset; // TODO: ONESHOT
