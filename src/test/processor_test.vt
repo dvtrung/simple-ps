@@ -24,7 +24,7 @@ module processor_test();
   processor processor_(
     .clock(clock), .reset(reset),
     .m_q(m_q),
-    .m_addr(m_addr), .m_data(m_data), .m_wren(m_wren)
+    .m_addr(m_addr), .m_data(m_data), .m_rw(m_wren)
   );
 
   initial begin
