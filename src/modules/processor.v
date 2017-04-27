@@ -84,12 +84,12 @@ module processor(
   wire [3:0] szcv_res;
   alu alu_(
     .a(p3_AR), .b(p3_BR), .op(p3_op3),
-    .res(alu_res), .szcv(szcv_res));
+    .res(alu_res), .szcv(alu_szcv));
   
   wire [15:0] shifter_res;
   shifter shifter_(
     .a(p3_BR), .d(p3_d), .op(p3_op3),
-    .res(shifter_res));
+    .res(shifter_res), .szcv(shifter_szcv));
 
   function [15:0] mux_dr;
     input [4:0] op3;
@@ -105,7 +105,7 @@ module processor(
   
   always @(posedge phase_bus[2]) begin
     p4_DR <= mux_dr(p3_op3);
-    p4_SZCV <= szcv_res;
+    p4_SZCV <= p3_op3[0] ? shifter_szcv : alu_szcv;
     p4_IR <= p3_IR;
     p4_D <= p3_D;
   end
@@ -118,6 +118,7 @@ module processor(
   always @(posedge phase_bus[3]) begin
     p5_DDR <= p4_DR;
     p5_MDR <= m_q;
+    p5_SZCV <= p5_SZCV;
     case (p4_op1)
       2'b00:
         r_rw <= 0;
