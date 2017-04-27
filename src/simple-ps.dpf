@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pin_planner>
+	<pin_info>
+		<pin name="selA" source="Pin Planner" >
+		</pin>
+		<pin name="selB" source="Pin Planner" >
+		</pin>
+		<pin name="selC" source="Pin Planner" >
+		</pin>
+		<pin name="selD" source="Pin Planner" >
+		</pin>
+		<pin name="selE" source="Pin Planner" >
+		</pin>
+		<pin name="selF" source="Pin Planner" >
+		</pin>
+		<pin name="selG" source="Pin Planner" >
+		</pin>
+		<pin name="selH" source="Pin Planner" >
+		</pin>
+		<pin name="led8[7]" source="Pin Planner" >
+		</pin>
+		<pin name="led8[6]" source="Pin Planner" >
+		</pin>
+		<pin name="led8[5]" source="Pin Planner" >
+		</pin>
+		<pin name="led8[4]" source="Pin Planner" >
+		</pin>
+		<pin name="led8[3]" source="Pin Planner" >
+		</pin>
+		<pin name="led8[2]" source="Pin Planner" >
+		</pin>
+		<pin name="led8[1]" source="Pin Planner" >
+		</pin>
+		<pin name="led8[0]" source="Pin Planner" >
+		</pin>
+	</pin_info>
+	<buses>
+	</buses>
+	<group_file_association>
+	</group_file_association>
+	<pin_planner_file_specifies>
+	</pin_planner_file_specifies>
+</pin_planner>
