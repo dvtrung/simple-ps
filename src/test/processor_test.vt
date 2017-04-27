@@ -1,0 +1,43 @@
+`include "./helper/header.vt"
+`include "../modules/processor.v"
+`include "../modules/controller.v"
+`include "../modules/alu.v"
+`include "../modules/shifter.v"
+`include "../modules/register.v"
+`include "../devices/ram_inc.v"
+
+module processor_test();
+
+  reg clock, reset;
+  wire m_wren;
+  wire [11:0] m_addr;
+  wire [15:0] m_data, m_q;
+    ram_inc #("../../memories/some_inst.mif") ram_inc_ (
+    .data(m_data), .wren(m_wren), .address(m_addr),
+    .clock(clock),
+    .q(m_q)
+  );
+  //mock_ram #("../../test/helper/some_inst.ram") mock_ram_ (
+   // .clock(clock), .wren(wren), .addr(m_addr), .data(m_data),
+  //  .q(m_q)
+  //);
+  processor processor_(
+    .clock(clock), .reset(reset),
+    .m_q(m_q),
+    .m_addr(m_addr), .m_data(m_data), .m_rw(m_wren)
+  );
+
+  initial begin
+    clock <= 0;
+    reset <= 1;
+    # 40
+    reset <= 0;
+    # 10000
+    $finish();
+  end
+
+  always begin
+    # 10
+    clock <= ~clock;
+  end
+endmodule
