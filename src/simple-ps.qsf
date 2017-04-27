@@ -68,27 +68,12 @@ set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME register_test -section_id
 set_global_assignment -name EDA_TEST_BENCH_NAME processor_test -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id processor_test
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME processor_test -section_id processor_test
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name VERILOG_FILE modules/controller.v
-set_global_assignment -name VERILOG_FILE hardware.v
-set_global_assignment -name VERILOG_FILE modules/alu.v
-set_global_assignment -name VERILOG_FILE modules/shifter.v
-set_global_assignment -name VERILOG_FILE modules/register.v
 set_global_assignment -name EDA_TEST_BENCH_NAME shifter_test -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id shifter_test
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME shifter_test -section_id shifter_test
-set_global_assignment -name VERILOG_FILE modules/multiplexer.v
-set_global_assignment -name QIP_FILE devices/ram01.qip
-set_global_assignment -name MIF_FILE devices/memory_test.mif
-set_global_assignment -name QIP_FILE devices/ram_inc.qip
-set_global_assignment -name VERILOG_FILE modules/processor.v
 set_global_assignment -name EDA_TEST_BENCH_NAME ram_inc_test -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ram_inc_test
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ram_inc_test -section_id ram_inc_test
-set_global_assignment -name VERILOG_FILE modules/out.v
-set_global_assignment -name VERILOG_FILE modules/seg7.v
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
 set_global_assignment -name EDA_TEST_BENCH_FILE test/hardware_test.vt -section_id hardware_test
 set_global_assignment -name EDA_TEST_BENCH_FILE test/multiplexer_test.vt -section_id multiplexer_test
@@ -178,3 +163,18 @@ set_location_assignment PIN_W17 -to seg_sel[2]
 set_location_assignment PIN_AA17 -to seg_sel[1]
 set_location_assignment PIN_V16 -to seg_sel[0]
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+
+set_global_assignment -name VERILOG_FILE modules/out_test.v
+set_global_assignment -name VERILOG_FILE modules/inp.v
+set_global_assignment -name VERILOG_FILE modules/controller.v
+set_global_assignment -name VERILOG_FILE hardware.v
+set_global_assignment -name VERILOG_FILE modules/alu.v
+set_global_assignment -name VERILOG_FILE modules/shifter.v
+set_global_assignment -name VERILOG_FILE modules/register.v
+set_global_assignment -name VERILOG_FILE modules/multiplexer.v
+set_global_assignment -name QIP_FILE devices/ram01.qip
+set_global_assignment -name MIF_FILE devices/memory_test.mif
+set_global_assignment -name QIP_FILE devices/ram_inc.qip
+set_global_assignment -name VERILOG_FILE modules/processor.v
+set_global_assignment -name VERILOG_FILE modules/out.v
+set_global_assignment -name VERILOG_FILE modules/seg7.v
