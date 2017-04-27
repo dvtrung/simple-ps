@@ -9,14 +9,14 @@ module register (
   reg [15:0] r [0:7];
   integer i;
 
-  always @(posedge clock or negedge reset) begin
+  always @(posedge clock or posedge reset) begin
     if (reset) begin
       for (i = 0; i < 8 ; i = i + 1)
-        r[i] = i; //16'b0;
-    end
-    
-    if (write) begin
-      r[rb] = data;
+        r[i] <= i; //16'b0;
+    end else begin
+      if (write) begin
+        r[rb] = data;
+      end
     end
   end
 

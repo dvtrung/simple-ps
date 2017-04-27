@@ -31,8 +31,9 @@ module register_test();
     write <= 0;
     reset <= 1;
     counter <= 0;
-    #100
-    reset <= 0;
+    #100  reset <= 0;
+    #1000 reset <= 1;
+    #10   reset <= 0;
     #1000
     $display("TEST FINSHED in %m");
     $finish();
