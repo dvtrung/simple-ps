@@ -12,7 +12,7 @@ module register (
   always @(posedge clock or posedge reset) begin
     if (reset) begin
       for (i = 0; i < 8 ; i = i + 1)
-        r[i] <= i; //16'b0;
+        r[i] <= 16'b0;
     end else begin
       if (write) begin
         r[rb] = data;

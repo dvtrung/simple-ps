@@ -39,7 +39,7 @@ CODE5 = {
 
 def dec_to_bin(x, dcount): return bin(int(x))[2:].zfill(dcount)
 
-print("WIDTH=16;\nDEPTH=4096;\nADDRESS_RADIX=UNS;\nDATA_RADIX=BIN;\nCONTENT BEGIN\n\t[0..4095] : 0;")
+print("WIDTH=16;\nDEPTH=4096;\nADDRESS_RADIX=UNS;\nDATA_RADIX=BIN;\nCONTENT BEGIN\n\t[0..4095] : 0;\n")
 count = 0
 
 for line in sys.stdin:
@@ -47,7 +47,6 @@ for line in sys.stdin:
   if not a:
     print("--")
     continue
-  count+=1
   res = None
   if a[0] in CODE1:
     assert len(a) == 3, "unmatchd args"
@@ -74,5 +73,6 @@ for line in sys.stdin:
   assert res is not None, line + " may not be a inst!"
   assert len(res) == 16, line + " -> " + res + " is a iligal inst!"
   print("\t" + str(count) + ":\t" + res + "; -- " + line.strip())
+  count+=1
 
 print("END;")

@@ -43,7 +43,7 @@ module processor(
   wire [2:0] r_wb;
   register register_(
     .clock(~(phase_bus[1] | phase_bus[4])), .reset(reset_ps),
-    .ra(p1_r1), .rb(r_wb),
+    .ra(p1_r2), .rb(r_wb),
     .write(r_rw), .data(r_data),
     .ar(ar_res), .br(br_res));
 
@@ -85,12 +85,12 @@ module processor(
   wire [15:0] shifter_res;
   wire [3:0] shifter_szcv;
   shifter shifter_(
-    .a(p3_BR), .d(p3_d), .op(p3_op3[1:0]),
+    .a(p3_AR), .d(p3_d), .op(p3_op3[1:0]),
     .res(shifter_res), .szcv(shifter_szcv));
 
   function [15:0] mux_dr;
     input [15:0] ir;
-    input [15:0] alu, shifter, ar, d, pc;
+    input [15:0] alu, shifter, br, d, pc;
   begin
     case (ir[15:14])
       2'b11: case (ir[7:6])
@@ -99,7 +99,7 @@ module processor(
         2'b10: mux_dr = shifter;
         2'b11: mux_dr = 16'hX1;
       endcase
-      2'b01: mux_dr = ar; /*ST*/
+      2'b01: mux_dr = br; /*ST*/
       2'b10: mux_dr = (ir[13:11] == 3'b000) ? d /*LI*/
                                             : pc + d; /*JP*/
       2'b11: mux_dr = 16'hX1;
@@ -108,7 +108,7 @@ module processor(
   endfunction
   
   wire [15:0] dr_res = mux_dr(p3_IR,
-    alu_res, shifter_res, p3_AR, p3_D, p3_PC);
+    alu_res, shifter_res, p3_BR, p3_D, p3_PC);
   
   ////// P4
   reg [15:0] p4_PC;
@@ -123,8 +123,8 @@ module processor(
     p4_DR <= dr_res;
     p4_SZCV <= p3_op3[0] ? shifter_szcv : alu_szcv;
     p4_IR <= p3_IR;
-    p4_MR <= p3_BR + p3_D;
-    m_addr <= p3_BR + p3_D;
+    p4_MR <= p3_AR + p3_D;
+    m_addr <= p3_AR + p3_D;
     m_rw <= (p3_op1 == 2'b01 /*ST*/);
     m_data <= dr_res;
   end
@@ -149,7 +149,7 @@ module processor(
   reg [15:0] p5_r_wb;
 
   assign r_data = (p4_IR[15:14] == 2'b00 /*LD*/) ? p5_MDR : p5_DR;
-  assign r_wb = r_rw ? p5_r_wb : p1_r2;
+  assign r_wb = r_rw ? p5_r_wb : p1_r1;
   always @(posedge phase_bus[4]) begin
     p5_IR <= p4_IR;
     p5_DR <= p4_DR;

@@ -17,10 +17,7 @@ module processor_test();
     .clock(~clock),
     .q(m_q)
   );
-  //mock_ram #("../../test/helper/some_inst.ram") mock_ram_ (
-   // .clock(clock), .wren(wren), .addr(m_addr), .data(m_data),
-  //  .q(m_q)
-  //);
+
   processor processor_(
     .clock(clock), .reset(reset),
     .m_q(m_q),
