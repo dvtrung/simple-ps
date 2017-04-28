@@ -66,7 +66,7 @@ module processor(
   wire [3:0] p3_op3 = p3_IR[7:4];
   wire [3:0] p3_d = p3_IR[3:0];
   reg [15:0] p3_AR, p3_BR;
-  reg [15:0] p3_D;
+  reg signed [15:0] p3_D;
 
   always @(posedge phase_bus[2]) begin
     p3_PC <= p2_PC;
@@ -90,7 +90,9 @@ module processor(
 
   function [15:0] mux_dr;
     input [15:0] ir;
-    input [15:0] alu, shifter, ar, d, pc;
+    input [15:0] alu, shifter, ar;
+    input signed [15:0] d;
+    input [15:0] pc;
   begin
     case (ir[15:14])
       2'b11: case (ir[7:6])
@@ -112,7 +114,7 @@ module processor(
   
   ////// P4
   reg [15:0] p4_PC;
-  reg [15:0] p4_DR;
+  reg signed [15:0] p4_DR;
   reg [3:0] p4_SZCV;
   reg [15:0] p4_MR;
   reg [15:0] p4_IR;
@@ -159,5 +161,7 @@ module processor(
     r_rw <= mux_r_rw(p4_IR);
     p5_r_wb <= (p4_IR[15:14] == 2'b00) ? p4_IR[13:11] /*LD*/
                                        : p4_IR[10:8];
+    p1_PC <= (p4_IR[15:13] == 3'b101) ? p4_DR /*JP*/
+                                      : p1_PC;
   end
 endmodule

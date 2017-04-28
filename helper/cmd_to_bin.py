@@ -37,13 +37,18 @@ CODE5 = {
   "bne": "011"
 }
 
-def dec_to_bin(x, dcount): return bin(int(x))[2:].zfill(dcount)
+def dec_to_bin(x, dcount):
+  xi = int(x)
+  if xi >= 0:
+    return bin(xi)[2:].zfill(dcount)
+  else:
+    return ('{:0' + str(dcount) + 'b}').format(xi & (2 ** (dcount) - 1))
 
 print("WIDTH=16;\nDEPTH=4096;\nADDRESS_RADIX=UNS;\nDATA_RADIX=BIN;\nCONTENT BEGIN\n\t[0..4095] : 0;\n")
 count = 0
 
 for line in sys.stdin:
-  a = re.findall(r"[\w']+", line)
+  a = re.findall(r"-?[\w']+", line)
   if not a:
     print("--")
     continue
