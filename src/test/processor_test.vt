@@ -14,7 +14,7 @@ module processor_test();
   wire [15:0] m_data, m_q;
     ram_inc #("../../memories/some_inst.mif") ram_inc_ (
     .data(m_data), .wren(m_wren), .address(m_addr),
-    .clock(clock),
+    .clock(~clock),
     .q(m_q)
   );
   //mock_ram #("../../test/helper/some_inst.ram") mock_ram_ (

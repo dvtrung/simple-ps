@@ -17,15 +17,15 @@ SRA ok
 ## I/O
 IN
 OUT
-@@@
+NOP !
 HLT
 
 # xx$ra$rb$d........
-LD
-ST
+LD ok
+ST ok
 
 # 10xxx$Rb$d........
-LI
+LI ok
 xxx
 xxx
 xxx
