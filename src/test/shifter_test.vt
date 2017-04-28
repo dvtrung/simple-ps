@@ -6,11 +6,12 @@ module shifter_test();
   reg [15:0] a;
   reg [3:0] d;
   reg [3:0] op;
+  wire [3:0] szcv;
  
   wire [15:0] res;
   shifter shifter_(
      .a(a), .d(d), .op(op),
-    .res(res)
+    .res(res), .szcv(szcv)
   );
   
   initial begin
@@ -26,7 +27,7 @@ module shifter_test();
     #20
     op = 2'b1000;
     a = 16'b0100100010001001;
-    d = 4'b0110;
+    d = 4'b0001;
 
     #20
     op = 4'b1001;
