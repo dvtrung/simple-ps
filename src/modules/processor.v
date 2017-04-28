@@ -21,8 +21,10 @@ module processor(
   reg [15:0] p1_PC;
   initial p1_PC <= 0;
   
-  reg [15:0] p2_PC;
-  
+  wire [15:0] p1_IR = m_q;
+  wire [2:0] p1_r1 = p1_IR[13:11];
+  wire [2:0] p1_r2 = p1_IR[10:8];
+
   reg r_rw;
   always @(posedge phase_bus[0]) begin
     m_addr <= p1_PC;
@@ -33,28 +35,17 @@ module processor(
   
   ////// p2
   reg [15:0] p2_IR;
-  wire [2:0] p2_r1 = p2_IR[13:11];
-  wire [2:0] p2_r2 = p2_IR[10:8];
   wire [7:0] p2_ld = p2_IR[7:0];
-  
+  reg [15:0] p2_PC;
   wire [15:0] r_data;
   wire [15:0] ar_res, br_res;
   
-  reg [2:0] r_wb;
+  wire [2:0] r_wb;
   register register_(
     .clock(~(phase_bus[1] | phase_bus[4])), .reset(reset_ps),
-    .ra(p2_r1), .rb(r_wb),
+    .ra(p1_r1), .rb(r_wb),
     .write(r_rw), .data(r_data),
     .ar(ar_res), .br(br_res));
-
-  wire [15:0] r0 = register_.r[0];
-  wire [15:0] r1 = register_.r[1];
-  wire [15:0] r2 = register_.r[2];
-  wire [15:0] r3 = register_.r[3];
-  wire [15:0] r4 = register_.r[4];
-  wire [15:0] r5 = register_.r[5];
-  wire [15:0] r6 = register_.r[6];
-  wire [15:0] r7 = register_.r[7];
 
   function [15:0] sign_ext;
     input [7:0] in;
@@ -64,9 +55,8 @@ module processor(
   endfunction 
     
   always @(posedge phase_bus[1]) begin
-    p2_IR <= m_q;
-    p2_PC <= p1_PC + 16'd1;
-    r_wb <= m_q[10:8];
+    p2_IR <= p1_IR;
+    p2_PC <= p1_PC;
   end  
 
   ////// P3
@@ -86,14 +76,6 @@ module processor(
     p3_BR <= br_res;
   end
   
-  ////// P4
-  reg [15:0] p4_PC;
-  reg [15:0] p4_DR;
-  reg [3:0] p4_SZCV;
-  reg [15:0] p4_MR;
-  reg [15:0] p4_IR;
-  wire [1:0] p4_op1 = p4_IR[15:14]; 
-  
   wire [15:0] alu_res;
   wire [3:0] alu_szcv;
   alu alu_(
@@ -108,37 +90,45 @@ module processor(
 
   function [15:0] mux_dr;
     input [15:0] ir;
+    input [15:0] alu, shifter, ar, d, pc;
   begin
     case (ir[15:14])
-      2'b11: case (ir[7:4])
-        2'b00: mux_dr = alu_res;
-        2'b01: mux_dr = alu_res;
-        2'b10: mux_dr = shifter_res;
-        // TODO:OTHER
+      2'b11: case (ir[7:6])
+        2'b00: mux_dr = alu;
+        2'b01: mux_dr = alu;
+        2'b10: mux_dr = shifter;
+        2'b11: mux_dr = 16'hX1;
       endcase
-      2'b01: mux_dr = p3_AR; /*ST*/
-      2'b10: mux_dr = (ir[13:11] == 3'b000) ? p3_D /*LI*/
-                                            : p3_PC + p3_D; /*JP*/
+      2'b01: mux_dr = ar; /*ST*/
+      2'b10: mux_dr = (ir[13:11] == 3'b000) ? d /*LI*/
+                                            : pc + d; /*JP*/
+      2'b11: mux_dr = 16'hX1;
     endcase
   end
   endfunction
   
+  wire [15:0] dr_res = mux_dr(p3_IR,
+    alu_res, shifter_res, p3_AR, p3_D, p3_PC);
+  
+  ////// P4
+  reg [15:0] p4_PC;
+  reg [15:0] p4_DR;
+  reg [3:0] p4_SZCV;
+  reg [15:0] p4_MR;
+  reg [15:0] p4_IR;
+  wire [1:0] p4_op1 = p4_IR[15:14]; 
+
+  
   always @(posedge phase_bus[3]) begin
     p4_PC <= p3_PC;
-    p4_DR <= mux_dr(p3_IR);
+    p4_DR <= dr_res;
     p4_SZCV <= p3_op3[0] ? shifter_szcv : alu_szcv;
     p4_IR <= p3_IR;
     p4_MR <= p3_BR + p3_D;
     m_addr <= p3_BR + p3_D;
     m_rw <= (p3_op1 == 2'b01 /*ST*/);
-    m_data <= mux_dr(p3_IR);
+    m_data <= dr_res;
   end
-
-  ////// P5
-  reg [15:0] p5_DR;
-  reg [3:0] p5_SZCV;
-  reg [15:0] p5_MDR;
-  reg [15:0] p5_IR;
   
   function mux_r_rw;
     input [15:0] ir;
@@ -151,8 +141,16 @@ module processor(
     endcase
   end
   endfunction
-  
+
+  ////// P5
+  reg [15:0] p5_DR;
+  reg [3:0] p5_SZCV;
+  reg [15:0] p5_MDR;
+  reg [15:0] p5_IR;
+  reg [15:0] p5_r_wb;
+
   assign r_data = (p4_IR[15:14] == 2'b00 /*LD*/) ? p5_MDR : p5_DR;
+  assign r_wb = r_rw ? p5_r_wb : p1_r2;
   always @(posedge phase_bus[4]) begin
     p5_IR <= p4_IR;
     p5_DR <= p4_DR;
@@ -160,7 +158,7 @@ module processor(
     p5_SZCV <= p4_SZCV;
     m_rw <= 0;
     r_rw <= mux_r_rw(p4_IR);
-    r_wb <= (p4_IR[15:14] == 2'b00) ? p4_IR[13:11] /*LD*/
-                                   : p4_IR[10:8];
+    p5_r_wb <= (p4_IR[15:14] == 2'b00) ? p4_IR[13:11] /*LD*/
+                                       : p4_IR[10:8];
   end
 endmodule

@@ -27,6 +27,15 @@ module processor_test();
     .m_addr(m_addr), .m_data(m_data), .m_rw(m_wren)
   );
 
+  wire [15:0] r0 = processor_.register_.r[0];
+  wire [15:0] r1 = processor_.register_.r[1];
+  wire [15:0] r2 = processor_.register_.r[2];
+  wire [15:0] r3 = processor_.register_.r[3];
+  wire [15:0] r4 = processor_.register_.r[4];
+  wire [15:0] r5 = processor_.register_.r[5];
+  wire [15:0] r6 = processor_.register_.r[6];
+  wire [15:0] r7 = processor_.register_.r[7];
+
   initial begin
     clock <= 0;
     reset <= 1;
