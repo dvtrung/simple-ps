@@ -118,7 +118,6 @@ module processor(
   reg [15:0] p4_IR;
   wire [1:0] p4_op1 = p4_IR[15:14]; 
 
-  
   always @(posedge phase_bus[3]) begin
     p4_PC <= p3_PC;
     p4_DR <= dr_res;
