@@ -1,5 +1,5 @@
 module hardware (
-  input  clock, reset, exec, rw,
+  input  clock, reset, exec, m_rw,
   input [15:0] inp,
   
   output [7:0] led0,
@@ -21,6 +21,6 @@ module hardware (
   
   inp inp_ (.inp(inp), .inpval(inpval));
   processor processor_ (.clock(clock), .reset(reset), .exec(exec),
-    .m_q(m_q), .m_data(m_data), .m_rw(rw), .m_addr(m_addr));
+    .m_q(m_q), .m_data(m_data), .m_rw(m_rw), .m_addr(m_addr));
   out out_ (.led0(led0), .led1(led1), .led2(led2), .led3(led3), .outval1(m_data), .sel(sel));
 endmodule

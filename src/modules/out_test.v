@@ -32,7 +32,6 @@ module out_test();
   
   initial begin
     outval = 16'b0;
-
     clock = 0; reset = 1;
     sel = 3'b000;
   end
