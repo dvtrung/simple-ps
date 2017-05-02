@@ -178,4 +178,13 @@ set_global_assignment -name EDA_TEST_BENCH_FILE test/out_test.vt -section_id out
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_location_assignment PIN_F9 -to oled[0]
+set_location_assignment PIN_A8 -to oled[7]
+set_location_assignment PIN_B8 -to oled[6]
+set_location_assignment PIN_C8 -to oled[5]
+set_location_assignment PIN_F8 -to oled[4]
+set_location_assignment PIN_A9 -to oled[3]
+set_location_assignment PIN_B9 -to oled[2]
+set_location_assignment PIN_E9 -to oled[1]
+set_location_assignment PIN_A20 -to n_reset
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

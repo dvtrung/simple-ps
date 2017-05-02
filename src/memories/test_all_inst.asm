@@ -39,8 +39,7 @@ ld 3 61 0
 
 li 4 1
 li 5 0
-li 6 0
-mov 7 5
+li 7 0
 add 5 4
-add 6 5
+add 7 5
 b 0 -3
