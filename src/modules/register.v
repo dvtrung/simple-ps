@@ -3,8 +3,7 @@ module register (
   input [2:0] ra, rb,
   input write,
   input [15:0] data, // data to write
-  output [15:0] ar, br,
-  output [15:0] reg_watch
+  output [15:0] ar, br
   );
 
   reg [15:0] r [0:7];
@@ -23,5 +22,4 @@ module register (
 
   assign ar = r[ra];
   assign br = r[rb];
-  assign reg_watch = r[2];
 endmodule
