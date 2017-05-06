@@ -12,16 +12,25 @@ module processor_test();
   wire m_wren;
   wire [11:0] m_addr;
   wire [15:0] m_data, m_q;
-    ram_inc #("../../memories/test_all_inst.mif") ram_inc_ (
+    ram_inc #("../../memories/test_output.mif") ram_inc_ (
     .data(m_data), .wren(m_wren), .address(m_addr),
     .clock(~clock),
     .q(m_q)
   );
 
+  wire [15:0] outval1, outval2;
+  wire [2:0] outsel;
+
+  wire [15:0] ir;
+  wire [2:0] phase;
+  wire [15:0] pc;
+
   processor processor_(
     .clock(clock), .reset(reset),
     .m_q(m_q),
-    .m_addr(m_addr), .m_data(m_data), .m_rw(m_wren)
+    .m_addr(m_addr), .m_data(m_data), .m_rw(m_wren), .pc(pc),
+    .outval1(outval1), .outval2(outval2), .outsel(outsel),
+    .ir(ir), .phase(phase)
   );
 
   wire [15:0] r0 = processor_.register_.r[0];

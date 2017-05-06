@@ -9,7 +9,11 @@ module processor(
   output [15:0] reg_watch,
   output [15:0] pc,
   output [2:0] phase,
-  output [15:0] ir
+  output [15:0] ir,
+  
+  output [15:0] outval1,     // output value
+  output [15:0] outval2,
+  output [2:0] outsel        // if output command
   );
   
   ////// Controller
@@ -75,7 +79,13 @@ module processor(
     begin
       sign_ext = {{8{in[7]}}, in[7:0]};
     end
-  endfunction 
+  endfunction
+  
+  reg [2:0] outsel_;
+  assign outsel = outsel_;
+  reg outval1_, outval2_;
+  assign outval1 = p3_AR;
+  assign outval2 = p3_BR;
     
   always @(posedge phase_bus[2]) begin
     p3_PC <= p2_PC;
@@ -83,6 +93,12 @@ module processor(
     p3_IR <= p2_IR;
     p3_AR <= p2_AR;
     p3_BR <= p2_BR;
+
+    if ((p2_IR[15:14] == 2'b11) && (p2_IR[7:4] == 4'b1101)) begin
+      outsel_ <= p2_IR[2:0];
+    end else begin
+      outsel_ <= 3'bXXX;
+    end
   end
   
   wire [15:0] alu_res;

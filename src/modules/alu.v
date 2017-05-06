@@ -8,7 +8,7 @@ module alu(
   reg [16:0] res_; reg[16:0] res__;
   reg [3:0] szcv_;
   
-  always @(a, b, op) begin
+  always @(*) begin
     case (op)
       4'b0000: res_ = a + b;  // ADD
       4'b0001: res_ = a - b;  // SUB

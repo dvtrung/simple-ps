@@ -4,6 +4,9 @@ module out (
   input [15:0] outval1,
   input [15:0] outval2,
   
+  input display_out1,
+  input display_out2,
+  
   input [2:0] sel,
   
   output [7:0] led0,
@@ -28,21 +31,20 @@ module out (
   generate
     for (index = 0; index < 8; index = index + 1) 
     begin: gen_seg
-      seg7 seg7_led (.num(num[index]), .seg(led[index]));
+      seg7 seg7_led (.num(num[index]), .seg(led[index]), .display(index < 4 ? display_out1 : display_out2));
     end
   endgenerate
   
   always @(posedge clock) begin
-    
     num[0] <= outval1[15:12];
     num[1] <= outval1[11:08];
     num[2] <= outval1[07:04];
     num[3] <= outval1[03:00];
-    
+      
     for (i = 0; i < 8; i = i + 1) begin
       seg_sel_[i] <= (i == sel);
     end
-    
+
     num[4] <= outval2[15:12];
     num[5] <= outval2[11:08];
     num[6] <= outval2[07:04];

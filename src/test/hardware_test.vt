@@ -15,16 +15,43 @@ module hardware_test();
 
   wire res;
   wire [15:0] inp;
-  wire [7:0] led0, led1, led2, led3, led4, led5, led6, led7, seg_sel, oled;
+  wire [7:0] seg_sel, oled;
+  
+  
+  
+  wire [15:0] m_q;
+  wire [15:0] pc;
+
   hardware hardware_(
     .clock(clock), .n_reset(reset),
     .inp(inp),
-    .led0(led0), .led1(led1),
-    .led2(led2), .led3(led3),
-    .led4(led4), .led5(led5),
-    .led6(led6), .led7(led7),
-    .seg_sel(seg_sel), .oled(oled)
+    .seg_sel(seg_sel), .oled(oled),
+    .m_q(m_q), .pc(pc)
   );
+  
+  wire [15:0] outval1_0 = hardware_.outval1[0];
+  wire [15:0] outval1_1 = hardware_.outval1[1];
+  wire [15:0] outval1_2 = hardware_.outval1[2];
+  wire [15:0] outval1_3 = hardware_.outval1[3];
+  wire [15:0] outval1_4 = hardware_.outval1[4];
+  wire [15:0] outval1_5 = hardware_.outval1[5];
+  wire [15:0] outval1_6 = hardware_.outval1[6];
+  wire [15:0] outval1_7 = hardware_.outval1[7];
+
+  wire [15:0] outval2_0 = hardware_.outval2[0];
+  wire [15:0] outval2_1 = hardware_.outval2[1];
+  wire [15:0] outval2_2 = hardware_.outval2[2];
+  wire [15:0] outval2_3 = hardware_.outval2[3];
+  wire [15:0] outval2_4 = hardware_.outval2[4];
+  wire [15:0] outval2_5 = hardware_.outval2[5];
+  wire [15:0] outval2_6 = hardware_.outval2[6];
+  wire [15:0] outval2_7 = hardware_.outval2[7];
+
+  wire [2:0] outsel = hardware_.outsel;
+
+  wire [15:0] outval1__ = hardware_.outval1__;
+  wire [15:0] outval2__ = hardware_.outval2__;
+
   
   initial begin
     clock = 0;
@@ -33,7 +60,7 @@ module hardware_test();
     reset = 0;
     #30
     reset = 1;
-    #1000000
+    #5000
     $display("TEST FINSHED in %m");
     $finish();
   end
