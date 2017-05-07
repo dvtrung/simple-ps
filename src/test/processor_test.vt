@@ -21,16 +21,11 @@ module processor_test();
   wire [15:0] outval1, outval2;
   wire [2:0] outsel;
 
-  wire [15:0] ir;
-  wire [2:0] phase;
-  wire [15:0] pc;
-
   processor processor_(
     .clock(clock), .reset(reset),
     .m_q(m_q),
-    .m_addr(m_addr), .m_data(m_data), .m_rw(m_wren), .pc(pc),
-    .outval1(outval1), .outval2(outval2), .outsel(outsel),
-    .ir(ir), .phase(phase)
+    .m_addr(m_addr), .m_data(m_data), //.m_rw(m_wren),
+    .outval1(outval1), .outval2(outval2), .outsel(outsel)
   );
 
   wire [15:0] r0 = processor_.register_.r[0];
@@ -41,6 +36,19 @@ module processor_test();
   wire [15:0] r5 = processor_.register_.r[5];
   wire [15:0] r6 = processor_.register_.r[6];
   wire [15:0] r7 = processor_.register_.r[7];
+  
+  wire [15:0] p1_IR = processor_.p1_IR;
+  wire [15:0] p2_IR = processor_.p2_IR;
+  wire [15:0] p3_IR = processor_.p3_IR;
+  wire [15:0] p4_IR = processor_.p4_IR;
+  wire [15:0] p5_IR = processor_.p5_IR;
+  
+  wire p5_RegDst = processor_.p5_RegDst;
+  wire RegWrite = processor_.register_.RegWrite;
+  wire [15:0] p5_DR = processor_.p5_DR;
+  
+  wire [2:0] write_addr = processor_.register_.write_addr;
+  wire [15:0] write_data = processor_.register_.write_data;
 
   initial begin
     clock <= 0;

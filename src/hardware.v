@@ -8,7 +8,7 @@ module hardware (
   output reg [7:0] oled
   );
   
-  wire [15:0] m_data, m_q, pc;
+  wire [15:0] m_data, m_q;//, pc;
   wire [11:0] m_addr;
   wire m_wren;
   reg s_clock;

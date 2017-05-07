@@ -1,8 +1,8 @@
 module register (
   input clock, reset,
-  input [2:0] ra, rb,
-  input write,
-  input [15:0] data, // data to write
+  input [2:0] ra, rb, write_addr,
+  input RegWrite,
+  input [15:0] write_data, // data to write
   output [15:0] ar, br
   );
 
@@ -14,8 +14,8 @@ module register (
       for (i = 0; i < 8 ; i = i + 1)
         r[i] <= 16'b0;
     end else begin
-      if (write) begin
-        r[rb] = data;
+      if (RegWrite) begin
+        r[write_addr] = write_data;
       end
     end
   end

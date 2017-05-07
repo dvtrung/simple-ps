@@ -10,27 +10,54 @@ module alu(
   
   always @(*) begin
     case (op)
-      4'b0000: res_ = a + b;  // ADD
-      4'b0001: res_ = a - b;  // SUB
+      4'b0000: begin          // ADD
+        res_ <= a + b;
+        szcv_[1] <= res_[16]; // C: if carry exists
+      end
+      4'b0001: begin          // SUB
+        res_ <= a - b;
+        szcv_[1] <= res_[16]; // C: if carry exists
+      end
+      4'b0010: res_ <= a & b;  // AND
+      4'b0011: res_ <= a | b;  // OR
+      4'b0100: res_ <= a ^ b;  // XOR
       
-      4'b0010: res_ = a & b;  // AND
-      4'b0011: res_ = a | b;  // OR
-      4'b0100: res_ = a ^ b;  // XOR
+      4'b0110: res_ <= b;      // MOV
       
-      4'b0110: res_ = b;      // MOV
-      
-      4'b0101: res_ = a;      // CMP
+      4'b0101: begin          // CMP
+        res_ <= a;
+        szcv_[1] = res__[16];
+      end
+      4'b1000: begin // SLL: Shift left logical
+        res_ <= a << (b - 1);
+        szcv_[1] <= res_[15];
+        res_ <= res_ << 1;
+      end
+      4'b1001: begin // SLR: Shift left rotate
+        res_ <= a << (b - 1);
+        szcv_[1] <= res_[15];
+        res_ <= res_ << 1;
+        res_ <= res_ | (a >> - b); 
+      end
+      4'b1010: begin // SRL: Shift right logical
+        res_ <= a >> (b - 1);
+        szcv_[1] <= res_[0];
+        res_ <= res_ >> 1;
+      end
+      4'b1011: begin // SRA: Shift right arithmetic
+        res_ <= a >> (b - 1);
+        szcv_[1] <= res_[0];
+        res_ <= res_ >> 1;
+        res_ <= res_ | (a << - b);
+      end
+      default: szcv_[1] <= 0;
     endcase
     
-    szcv_[3] = (res_[15] == 1);  // S: if negative
-    szcv_[2] = (res_ == 0); // Z: if equal to zero
+    szcv_[3] <= (res_[15] == 1);  // S: if negative
+    szcv_[2] <= (res_ == 0); // Z: if equal to zero
     
-    szcv_[1] = 0;
     if (op == 4'b0101) begin // CMP
-      res__ = a - b;
-      szcv_[1] = res__[16];
-    end else if (op == 4'b0000 | op == 4'b0001) begin // ADD or SUB
-      szcv_[1] = res_[16];    // C: if carry exists
+      res__ <= a - b;
     end
     
     szcv_[0] = 0;           // V: if overflow
