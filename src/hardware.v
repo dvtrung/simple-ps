@@ -8,7 +8,7 @@ module hardware (
   output reg [7:0] oled
   );
   
-  wire [15:0] m_data, m_q;//, pc;
+  wire [15:0] m_data, m_q;
   wire [11:0] m_addr;
   wire m_wren;
   reg s_clock;
@@ -18,22 +18,18 @@ module hardware (
     .q(m_q)
   );
   
-  wire exec, rw;
+  wire exec;
 
   wire [15:0] inpval;
   inp inp_ (.inp(inp), .inpval(inpval));
-  
-  wire [15:0] reg_watch, ir;
-  wire [2:0] phase;
-  
+    
   wire [2:0] outsel;
   wire [15:0] outval1;
   wire [15:0] outval2;
   
   processor processor_ (
     .clock(clock), .reset(~n_reset), .exec(exec),
-    .m_q(m_q), .m_data(m_data), .m_rw(rw), .m_addr(m_addr),
-    .reg_watch(reg_watch), .pc(pc), .phase(phase), .ir(ir),
+    .m_q(m_q), .m_data(m_data), .m_rw(m_wren), .m_addr(m_addr),
     .outval1(outval1), .outval2(outval2), .outsel(outsel));
   
   out out_ (.clock(clock), .reset(~n_reset),
@@ -50,10 +46,5 @@ module hardware (
     oled[0] <= ~n_reset;
     oled[1] <= cnt;
     cnt <= ~cnt;
-    oled[2] <= (phase == 3'd0);
-    oled[3] <= (phase == 3'd1);
-    oled[4] <= (phase == 3'd2);
-    oled[5] <= (phase == 3'd3);
-    oled[6] <= (phase == 3'd4);
   end
 endmodule
