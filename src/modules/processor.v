@@ -43,15 +43,12 @@ module processor(
   ///////////////////////////
   
   reg [15:0] p2_IR;
-  wire [2:0] p2_r1 = p2_IR[13:11];
-  wire [2:0] p2_r2 = p2_IR[10:8];
-  wire [7:0] p2_ld = p2_IR[7:0];
+  wire [2:0] p2_r1 = p2_IR[10:8];
+  wire [2:0] p2_r2 = p2_IR[13:11];
   reg [15:0] p2_PC;
   wire [15:0] p2_AR, p2_BR;
   
   reg p2_RegWrite, p2_MemtoReg, p2_RegDst, p2_ALUSrc, p2_PCSrc;
-  
-  assign ir = p2_IR;
   
   always @(posedge clock) begin
     p2_PC <= p1_PC; p2_IR <= p1_IR;
@@ -61,7 +58,7 @@ module processor(
     p2_RegDst <= p1_RegDst;
     p2_ALUSrc <= p1_ALUSrc;
     p2_PCSrc <= p1_PCSrc;
-  end  
+  end
   
   ///////////////////////////
   //   P3
@@ -71,9 +68,9 @@ module processor(
   reg [15:0] p3_IR;
   wire [1:0] p3_op1 = p3_IR[15:14];
   wire [3:0] p3_op3 = p3_IR[7:4];
-  wire [3:0] p3_d = p3_IR[3:0];
   reg [15:0] p3_AR, p3_BR;
-  reg signed [15:0] p3_DR;
+  wire signed [15:0] p3_DR;
+  reg [15:0] p3_D;
   
   reg p3_RegWrite, p3_MemtoReg, p3_RegDst, p3_ALUSrc, p3_PCSrc;
 
@@ -93,7 +90,7 @@ module processor(
   always @(posedge clock) begin
     p3_PC <= p2_PC; p3_IR <= p2_IR;
     
-    p3_DR <= sign_ext(p2_ld);
+    p3_D <= sign_ext(p3_IR[7:0]);
     p3_AR <= p2_AR;
     p3_BR <= p2_BR;
     
@@ -102,51 +99,57 @@ module processor(
     p3_RegDst <= p2_RegDst;
     p3_ALUSrc <= p2_ALUSrc;
     p3_PCSrc <= p2_PCSrc;
-    
-    if ((p2_IR[15:14] == 2'b11) && (p2_IR[7:4] == 4'b1101)) /*OUT*/ begin
-      outsel_ <= p2_IR[2:0];
-    end else begin
-      outsel_ <= 3'bXXX;
-    end
   end
   
   wire [3:0] p3_SZCV;
-  wire [15:0] p3_ALUOut;
-  alu alu_(.a(p3_BR), .b(p3_ALUSrc ? p3_d : p3_AR), .op(p3_op3),
-    .res(p3_ALUOut), .szcv(p3_SZCV));
+  alu_shifter alu_shifter_(
+    .a(p3_AR), .b(p3_ALUSrc ? p3_D : p3_BR), 
+    .shift_d(p3_IR[3:0]), .op(p3_op3),
+    .res(p3_DR), .szcv(p3_SZCV)
+  );
 
   ///////////////////////////
   //   P4
   ///////////////////////////
   
   reg [15:0] p4_PC;
+  reg [15:0] p4_IR;
   reg signed [15:0] p4_DR;
   reg [3:0] p4_SZCV; //TODO: SZCV is not pipeline register.
   //reg [15:0] p4_MR;
-  reg [15:0] p4_IR;
   wire [1:0] p4_op1 = p4_IR[15:14]; 
   //reg p4_m_rw;
   
   reg p4_RegWrite, p4_MemtoReg, p4_RegDst, p4_PCSrc;
   
-  //reg [11:0] p4_m_addr;
-  //reg [15:0] p4_m_data;
-  reg [15:0] p4_ALUOut;
+  reg [11:0] p4_addr;
+  reg [15:0] p4_data;
   always @(clock) begin
-    p4_PC <= p3_PC;
+    p4_PC <= p3_PC; p4_IR <= p3_IR;
     p4_DR <= p3_DR;
     p4_SZCV <= p3_SZCV;
     p4_IR <= p3_IR;
     //p4_MR <= p3_BR + p3_DR;
-    //p4_m_addr <= p3_BR + p3_DR;
+    p4_addr <= p4_DR;
     //p4_m_rw <= (p3_op1 == 2'b01 /*ST*/);
-    //p4_m_data <= dr_res;
+    p4_data <= p4_DR;
     
     p4_RegWrite <= p3_RegWrite;
     p4_MemtoReg <= p3_MemtoReg;
     p4_RegDst <= p3_RegDst;
-    p4_ALUOut <= p3_ALUOut;
     p4_PCSrc <= p3_PCSrc;
+
+    // Load / store
+    
+    
+    // Input
+    
+    // Output
+    if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1101)) /*OUT*/ begin
+      outsel_ <= p3_IR[2:0];
+    end else begin
+      outsel_ <= 3'bXXX;
+    end
   end
   //assign m_data = p4_m_data;
   //assign m_addr = p1_addr;//fill_bus[0] ? p1_m_addr :
@@ -163,8 +166,6 @@ module processor(
   reg [15:0] p5_r_wb;
   
   reg p5_RegWrite, p5_MemtoReg, p5_RegDst, p5_PCSrc;
-  
-  reg [15:0] p5_ALUOut;
 
   //assign m_rw = fill_bus[0] ? p1_m_rw : 
   //              fill_bus[3] ? p4_m_rw : 
@@ -174,11 +175,9 @@ module processor(
     p5_DR <= p4_DR;
     p5_MDR <= m_q;
     p5_SZCV <= p4_SZCV;
-    //p5_m_rw <= 0;
     
     p5_RegWrite <= p4_RegWrite;
     p5_MemtoReg <= p4_MemtoReg;
-    p5_ALUOut <= p4_ALUOut;
     p5_RegDst <= p4_RegDst;
     p5_PCSrc <= p4_PCSrc;
     
@@ -192,7 +191,7 @@ module processor(
     .ra(p2_r1), .rb(p2_r2 /*r_wb*/),
     .RegWrite(p5_RegWrite), 
     .write_addr(p5_RegDst ? p5_IR[10:8] : p5_IR[13:11]),
-    .write_data(p5_MemtoReg ? p5_DR : p5_ALUOut),
+    .write_data(p5_MemtoReg ? p5_D : p5_DR),
     .ar(p2_AR), .br(p2_BR));
   
   always @(posedge clock or posedge reset) begin

@@ -1,8 +1,7 @@
 `include "./helper/header.vt"
 `include "../modules/processor.v"
 `include "../modules/controller.v"
-`include "../modules/alu.v"
-`include "../modules/shifter.v"
+`include "../modules/alu_shifter.v"
 `include "../modules/register.v"
 `include "../devices/ram_inc.v"
 
@@ -42,6 +41,11 @@ module processor_test();
   wire [15:0] p3_IR = processor_.p3_IR;
   wire [15:0] p4_IR = processor_.p4_IR;
   wire [15:0] p5_IR = processor_.p5_IR;
+  
+  wire [15:0] p1_PC = processor_.p1_PC;
+  wire [15:0] p2_PC = processor_.p2_PC;
+  wire [15:0] p3_PC = processor_.p3_PC;
+  wire [15:0] p4_PC = processor_.p4_PC;
   
   wire p5_RegDst = processor_.p5_RegDst;
   wire RegWrite = processor_.register_.RegWrite;
