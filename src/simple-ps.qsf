@@ -52,7 +52,7 @@ set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH hardware_test -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH processor_test -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_NAME hardware_test -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id hardware_test
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME hardware_test -section_id hardware_test
@@ -174,6 +174,9 @@ set_global_assignment -name QIP_FILE devices/ram_inc.qip
 set_global_assignment -name VERILOG_FILE modules/processor.v
 set_global_assignment -name VERILOG_FILE modules/out.v
 set_global_assignment -name VERILOG_FILE modules/seg7.v
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name EDA_TEST_BENCH_FILE test/hardware_test.vt -section_id hardware_test
 set_global_assignment -name EDA_TEST_BENCH_FILE test/multiplexer_test.vt -section_id multiplexer_test
 set_global_assignment -name EDA_TEST_BENCH_FILE test/alu_test.vt -section_id alu_test
@@ -182,7 +185,20 @@ set_global_assignment -name EDA_TEST_BENCH_FILE test/processor_test.vt -section_
 set_global_assignment -name EDA_TEST_BENCH_FILE test/shifter_test.vt -section_id shifter_test
 set_global_assignment -name EDA_TEST_BENCH_FILE test/ram_inc_test.vt -section_id ram_inc_test
 set_global_assignment -name EDA_TEST_BENCH_FILE test/out_test.vt -section_id out_test
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_location_assignment PIN_A10 -to inpval1[15]
+set_location_assignment PIN_B10 -to inpval1[14]
+set_location_assignment PIN_C10 -to inpval1[13]
+set_location_assignment PIN_D10 -to inpval1[12]
+set_location_assignment PIN_E10 -to inpval1[11]
+set_location_assignment PIN_E11 -to inpval1[7]
+set_location_assignment PIN_C13 -to inpval1[3]
+set_location_assignment PIN_F10 -to inpval1[10]
+set_location_assignment PIN_G10 -to inpval1[9]
+set_location_assignment PIN_G11 -to inpval1[8]
+set_location_assignment PIN_F11 -to inpval1[6]
+set_location_assignment PIN_A13 -to inpval1[5]
+set_location_assignment PIN_B13 -to inpval1[4]
+set_location_assignment PIN_D13 -to inpval1[2]
+set_location_assignment PIN_E13 -to inpval1[1]
+set_location_assignment PIN_F13 -to inpval1[0]
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

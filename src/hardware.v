@@ -1,6 +1,7 @@
 module hardware (
   input clock, n_reset,
-  input [15:0] inp,
+  input [15:0] inpval1,
+  input [15:0] inpval2,
   
   output [7:0] led0, led1, led2, led3,
                led4, led5, led6, led7,
@@ -26,14 +27,16 @@ module hardware (
   wire [2:0] outsel;
   wire [15:0] outval1;
   wire [15:0] outval2;
+  wire outdisplay;
   
   processor processor_ (
     .clock(clock), .reset(~n_reset), .exec(exec),
     .m_q(m_q), .m_data(m_data), .m_rw(m_wren), .m_addr(m_addr),
-    .outval1(outval1), .outval2(outval2), .outsel(outsel));
+    .inpval1(inpval1), .inpval2(inpval2),
+    .outval1(outval1), .outval2(outval2), .outsel(outsel), .outdisplay(outdisplay));
   
   out out_ (.clock(clock), .reset(~n_reset),
-            .outval1(outval1), .outval2(outval2), .outsel(outsel),
+            .outval1(outval1), .outval2(outval2), .outsel(outsel), .outdisplay(outdisplay),
             .led0(led0), .led1(led1),
             .led2(led2), .led3(led3),
             .led4(led4), .led5(led5),
@@ -41,11 +44,7 @@ module hardware (
             .seg_sel(seg_sel));
             
 
-  reg cnt = 0;
   always @(posedge clock) begin
-    oled[0] <= ~n_reset;
-    //oled[1] <= cnt;
-    //cnt <= ~cnt;
-    oled <= oled + 1;
+    oled <= inpval1[7:0];
   end
 endmodule

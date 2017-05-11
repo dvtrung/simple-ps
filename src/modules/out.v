@@ -6,6 +6,8 @@ module out (
   
   input [2:0] outsel,
   
+  input outdisplay,
+  
   output [7:0] led0,
   output [7:0] led1,
   output [7:0] led2,
@@ -33,7 +35,9 @@ module out (
   reg [15:0] outval1_;
   reg [15:0] outval2_;
   
-  reg [2:0] outsel2 = 3'b000;
+  reg [2:0] outsel2 = 3'bXXX;
+  
+  reg[2:0] refresh = 3'b000;
   
   integer i;
   
@@ -55,36 +59,19 @@ module out (
       outdisplay_flag2[2] <= 0; outdisplay_flag2[3] <= 0;
       outdisplay_flag2[4] <= 0; outdisplay_flag2[5] <= 0;
       outdisplay_flag2[6] <= 0; outdisplay_flag2[7] <= 0;
+      refresh <= 3'b111;
     end else begin
-      arr_outval1[7] = 16'b1001110011100101;
-      outdisplay_flag1[7] <= 1;
-    
-      if (outsel_flag == 4'b0000) begin 
-        outsel2 <= outsel2 + 1;
-      end else begin
-        outval1_ <= arr_outval1[outsel2];
-        outval2_ <= arr_outval2[outsel2];
-        outdisplay_flag1_ <= outdisplay_flag1[outsel2];
-        outdisplay_flag2_ <= outdisplay_flag2[outsel2];
-      end
-      outsel_flag <= outsel_flag + 1;
-      
-      num[0] <= outval1_[15:12];
-      num[1] <= outval1_[11:08];
-      num[2] <= outval1_[07:04];
-      num[3] <= outval1_[03:00];
-        
-      for (i = 0; i < 8; i = i + 1) begin
-        seg_sel_[i] <= (i == outsel2);
-      end
-
-      num[4] <= outval2_[15:12];
-      num[5] <= outval2_[11:08];
-      num[6] <= outval2_[07:04];
-      num[7] <= outval2_[03:00];
-      
-
-      if (outsel !== 3'bXXX) begin
+      //if (outsel_flag == 4'b0000) begin 
+      //  outsel2 <= outsel2 + 1;
+      //end else begin
+      //  outval1_ <= arr_outval1[outsel2];
+      //  outval2_ <= arr_outval2[outsel2];
+      //  outdisplay_flag1_ <= outdisplay_flag1[outsel2];
+      //  outdisplay_flag2_ <= outdisplay_flag2[outsel2];
+      //end
+      //outsel_flag <= outsel_flag + 1;
+      if (outdisplay) begin
+        //outsel2 <= outsel;
         if (outval1[15] !== 1'bX) begin
           arr_outval1[outsel] <= outval1;
           outdisplay_flag1[outsel] <= 1;
@@ -93,8 +80,35 @@ module out (
           arr_outval2[outsel] <= outval2;
           outdisplay_flag2[outsel] <= 1;
         end
+      end else begin
+        //
       end
+      outsel2 <= outsel2 + 1;
+      
+      //if (refresh != 3'b0) begin
+          //outsel2 <= refresh;
+          //refresh <= refresh - 1;
+        //end
     end
+  end
+  
+  always @(outsel2) begin
+    num[0] <= arr_outval1[outsel2][15:12];
+    num[1] <= arr_outval1[outsel2][11:08];
+    num[2] <= arr_outval1[outsel2][07:04];
+    num[3] <= arr_outval1[outsel2][03:00];
+        
+    for (i = 0; i < 8; i = i + 1) begin
+      seg_sel_[i] <= (i == outsel2);
+    end
+
+    num[4] <= arr_outval2[outsel2][15:12];
+    num[5] <= arr_outval2[outsel2][11:08];
+    num[6] <= arr_outval2[outsel2][07:04];
+    num[7] <= arr_outval2[outsel2][03:00];
+    
+    outdisplay_flag1_ <= outdisplay_flag1[outsel2];
+    outdisplay_flag2_ <= outdisplay_flag2[outsel2];
   end
   
   assign led0 = led[0];

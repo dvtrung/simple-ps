@@ -3,13 +3,18 @@ module processor(
   input  reset,
   input  exec,
   input  [15:0] m_q,
+  
+  input inpval1,
+  input inpval2,
+  
   output [15:0] m_data,
   output m_rw,
   output [11:0] m_addr,
   
   output [15:0] outval1,     // output value
   output [15:0] outval2,
-  output [2:0] outsel        // if output instruction
+  output [2:0] outsel,        // if output instruction
+  output outdisplay
   );
   
   reg stall = 0;
@@ -124,8 +129,9 @@ module processor(
   
   reg p4_RegWrite, p4_MemtoReg, p4_RegDst, p4_PCSrc;
   
-  reg [2:0] outsel_;
+  reg [2:0] outsel_; reg outdisplay_;
   assign outsel = outsel_;
+  assign outdisplay = outdisplay_;
   assign outval1 = p4_AR;
   assign outval2 = p4_BR;
   
@@ -135,7 +141,7 @@ module processor(
     p4_PC <= p3_PC; p4_IR <= p3_IR;
     p4_DR <= p3_DR;
     p4_SZCV <= p3_SZCV;
-    p4_D <= p3_D;
+    p4_D = p3_D;
     p4_AR <= p3_AR; p4_BR <= p3_BR;
     
     p4_RegWrite <= p3_RegWrite;
@@ -162,13 +168,16 @@ module processor(
     
     // Input
     if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1100)) /* IN */ begin
+      p4_D = (p3_D == 16'b0) ? inpval1 : inpval2;
     end
     
     // Output
     if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1101)) /* OUT */ begin
       outsel_ <= p3_IR[2:0];
+      outdisplay_ <= 1;
     end else begin
       outsel_ <= 3'bXXX;
+      outdisplay_ <= 0;
     end
   end
   //assign m_data = p4_m_data;
