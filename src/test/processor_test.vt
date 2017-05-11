@@ -23,7 +23,7 @@ module processor_test();
   wire [11:0] main_m_addr;
   wire main_m_wren;
   
-  ram_inc #("../../memories/test_output.mif") main_ram_inc_ (
+  ram_inc #("../../memories/memory_inc.mif") main_ram_inc_ (
     .data(main_m_data), .wren(main_m_wren), .address(main_m_addr),
     .clock(~clock),
     .q(main_m_q)
@@ -68,7 +68,6 @@ module processor_test();
   wire [15:0] write_data = processor_.register_.write_data;
   
   wire p5_RegDst = processor_.p5_RegDst;
-  wire [15:0] p5_D = processor_.p5_D;
   wire [15:0] p4_D = processor_.p4_D;
   wire [15:0] p3_D = processor_.p3_D;
   
