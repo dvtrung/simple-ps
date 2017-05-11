@@ -44,7 +44,8 @@ module hardware (
   reg cnt = 0;
   always @(posedge clock) begin
     oled[0] <= ~n_reset;
-    oled[1] <= cnt;
-    cnt <= ~cnt;
+    //oled[1] <= cnt;
+    //cnt <= ~cnt;
+    oled <= oled + 1;
   end
 endmodule

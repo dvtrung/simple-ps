@@ -44,6 +44,9 @@ module hardware_test();
   wire [15:0] outval2_6 = hardware_.out_.arr_outval2[6];
   wire [15:0] outval2_7 = hardware_.out_.arr_outval2[7];
 
+  wire [2:0] outsel = hardware_.outsel;
+  wire [15:0] outval1 = hardware_.outval1;
+  wire [15:0] outval2 = hardware_.outval2;
   wire [15:0] outsel2 = hardware_.out_.outsel2;
   wire outdisplay_flag1_ = hardware_.out_.outdisplay_flag1_;
   wire outdisplay_flag2_ = hardware_.out_.outdisplay_flag2_;

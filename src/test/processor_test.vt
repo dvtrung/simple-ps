@@ -51,7 +51,14 @@ module processor_test();
   
   wire [2:0] write_addr = processor_.register_.write_addr;
   wire [15:0] write_data = processor_.register_.write_data;
-
+  
+  wire p5_RegDst = processor_.p5_RegDst;
+  wire [15:0] p5_D = processor_.p5_D;
+  wire [15:0] p4_D = processor_.p4_D;
+  wire [15:0] p3_D = processor_.p3_D;
+  
+  wire [15:0] p5_DR = processor_.p5_DR;
+  
   initial begin
     clock <= 0;
     reset <= 1;
