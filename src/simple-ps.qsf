@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "Cyclone IV E"
 set_global_assignment -name DEVICE EP4CE30F23I7
-set_global_assignment -name TOP_LEVEL_ENTITY hardware
+set_global_assignment -name TOP_LEVEL_ENTITY alu_shifter
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "12:26:03  APRIL 20, 2017"
 set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
@@ -52,7 +52,7 @@ set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH processor_test -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH hardware_test -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_NAME hardware_test -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id hardware_test
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME hardware_test -section_id hardware_test
@@ -153,9 +153,6 @@ set_location_assignment PIN_AA17 -to seg_sel[1]
 set_location_assignment PIN_V16 -to seg_sel[0]
 
 
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_location_assignment PIN_F9 -to oled[0]
 set_location_assignment PIN_A8 -to oled[7]
 set_location_assignment PIN_B8 -to oled[6]
@@ -165,15 +162,6 @@ set_location_assignment PIN_A9 -to oled[3]
 set_location_assignment PIN_B9 -to oled[2]
 set_location_assignment PIN_E9 -to oled[1]
 set_location_assignment PIN_A20 -to n_reset
-set_global_assignment -name EDA_TEST_BENCH_FILE test/hardware_test.vt -section_id hardware_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/multiplexer_test.vt -section_id multiplexer_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/alu_test.vt -section_id alu_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/register_test.vt -section_id register_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/processor_test.vt -section_id processor_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/shifter_test.vt -section_id shifter_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/ram_inc_test.vt -section_id ram_inc_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/out_test.vt -section_id out_test
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
 set_global_assignment -name VERILOG_FILE modules/alu_shifter.v
 set_global_assignment -name VERILOG_FILE modules/out_test.v
 set_global_assignment -name VERILOG_FILE modules/inp.v
@@ -186,3 +174,15 @@ set_global_assignment -name QIP_FILE devices/ram_inc.qip
 set_global_assignment -name VERILOG_FILE modules/processor.v
 set_global_assignment -name VERILOG_FILE modules/out.v
 set_global_assignment -name VERILOG_FILE modules/seg7.v
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name EDA_TEST_BENCH_FILE test/hardware_test.vt -section_id hardware_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/multiplexer_test.vt -section_id multiplexer_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/alu_test.vt -section_id alu_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/register_test.vt -section_id register_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/processor_test.vt -section_id processor_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/shifter_test.vt -section_id shifter_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/ram_inc_test.vt -section_id ram_inc_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/out_test.vt -section_id out_test

@@ -47,9 +47,7 @@ module processor_test();
   wire [15:0] p3_PC = processor_.p3_PC;
   wire [15:0] p4_PC = processor_.p4_PC;
   
-  wire p5_RegDst = processor_.p5_RegDst;
-  wire RegWrite = processor_.register_.RegWrite;
-  wire [15:0] p5_DR = processor_.p5_DR;
+  wire stall = processor_.stall;
   
   wire [2:0] write_addr = processor_.register_.write_addr;
   wire [15:0] write_data = processor_.register_.write_data;

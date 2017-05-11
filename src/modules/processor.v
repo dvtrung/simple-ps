@@ -12,12 +12,17 @@ module processor(
   output [2:0] outsel        // if output instruction
   );
   
+  reg stall = 0;
+  reg [11:0] mdr_addr_;
+  reg [15:0] mdr_data_;
+  assign m_data = mdr_data_;
+  assign m_addr = mdr_addr_;
+  
   ///////////////////////////
   //   P1
   ///////////////////////////
   
   reg [15:0] p1_PC;
-  assign m_addr = p1_PC; // TODO: Changed in LD
   assign m_rw = 0;
   wire [15:0] p1_IR = m_q;
   reg p1_r_rw;
@@ -51,7 +56,10 @@ module processor(
   reg p2_RegWrite, p2_MemtoReg, p2_RegDst, p2_ALUSrc, p2_PCSrc;
   
   always @(posedge clock) begin
-    p2_PC <= p1_PC; p2_IR <= p1_IR;
+    if (~stall) begin
+      p2_PC <= p1_PC; 
+      p2_IR <= p1_IR;
+    end
     // p2_AR, p2_BR <~ register in p5
     p2_RegWrite <= p1_RegWrite;
     p2_MemtoReg <= p1_MemtoReg;
@@ -112,11 +120,11 @@ module processor(
   //   P4
   ///////////////////////////
   
-  reg [15:0] p4_PC;
-  reg [15:0] p4_IR;
+  reg [15:0] p4_PC, p4_IR;
+  reg [15:0] p4_D;
   reg signed [15:0] p4_DR;
   reg [3:0] p4_SZCV; //TODO: SZCV is not pipeline register.
-  //reg [15:0] p4_MR;
+  reg [15:0] p4_MR;
   wire [1:0] p4_op1 = p4_IR[15:14]; 
   //reg p4_m_rw;
   
@@ -124,15 +132,11 @@ module processor(
   
   reg [11:0] p4_addr;
   reg [15:0] p4_data;
-  always @(clock) begin
+  always @(posedge clock) begin
     p4_PC <= p3_PC; p4_IR <= p3_IR;
     p4_DR <= p3_DR;
     p4_SZCV <= p3_SZCV;
-    p4_IR <= p3_IR;
-    //p4_MR <= p3_BR + p3_DR;
-    p4_addr <= p4_DR;
-    //p4_m_rw <= (p3_op1 == 2'b01 /*ST*/);
-    p4_data <= p4_DR;
+    p4_D <= p3_D;
     
     p4_RegWrite <= p3_RegWrite;
     p4_MemtoReg <= p3_MemtoReg;
@@ -140,12 +144,28 @@ module processor(
     p4_PCSrc <= p3_PCSrc;
 
     // Load / store
-    
+    if (p2_IR[15:14] == 2'b00) begin /* LD */
+      if (stall == 0) begin
+        stall <= 1;
+        p4_addr <= p4_DR;
+      end else begin
+        stall <= 0;
+        p4_D <= mdr_addr_;
+      end
+    end else if (p2_IR[15:14] == 2'b01) begin /* ST */
+      stall <= 1;
+    end
+    //p4_MR <= p3_BR + p3_DR;
+    //
+    //p4_m_rw <= (p3_op1 == 2'b01 /*ST*/);
+    //p4_data <= p4_DR;
     
     // Input
+    if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1100)) /* IN */ begin
+    end
     
     // Output
-    if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1101)) /*OUT*/ begin
+    if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1101)) /* OUT */ begin
       outsel_ <= p3_IR[2:0];
     end else begin
       outsel_ <= 3'bXXX;
@@ -159,7 +179,7 @@ module processor(
   //   P5
   ///////////////////////////
   
-  reg [15:0] p5_DR;
+  reg [15:0] p5_DR, p5_D;
   reg [3:0] p5_SZCV;
   reg [15:0] p5_MDR;
   reg [15:0] p5_IR;
@@ -173,6 +193,7 @@ module processor(
   always @(posedge clock) begin
     p5_IR <= p4_IR;
     p5_DR <= p4_DR;
+    p5_D <= p4_D;
     p5_MDR <= m_q;
     p5_SZCV <= p4_SZCV;
     
@@ -189,17 +210,18 @@ module processor(
   register register_(
     .clock(clock), .reset(reset),
     .ra(p2_r1), .rb(p2_r2 /*r_wb*/),
-    .RegWrite(p5_RegWrite), 
+    .RegWrite(stall ? 0 : p5_RegWrite), 
     .write_addr(p5_RegDst ? p5_IR[10:8] : p5_IR[13:11]),
     .write_data(p5_MemtoReg ? p5_D : p5_DR),
-    .ar(p2_AR), .br(p2_BR));
+    .ar(p2_BR), .br(p2_AR));
   
   always @(posedge clock or posedge reset) begin
     if (reset) begin
       p1_PC = 0;
-    end else begin
+    end else if (~stall) begin
       p1_PC <= p1_PC + 1;
       //TODO: PC changed in p1 and **p3**
     end
+    mdr_addr_ <= stall ? p4_addr : p1_PC;
   end
 endmodule

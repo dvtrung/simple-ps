@@ -6,6 +6,7 @@ out 1
 add 1 2
 out 1
 add 1 2
+ld 5 2 3
 out 1
 add 1 2
 out 1
