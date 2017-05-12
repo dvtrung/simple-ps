@@ -56,7 +56,8 @@ add 2 1
 li 0 4
 li 0 5
 li 0 6
-b 0 -5
+out 1 2 1
+b 0 -6
 li 0 0
 li 0 0
 li 0 0
