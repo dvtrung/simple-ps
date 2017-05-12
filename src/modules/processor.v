@@ -3,8 +3,7 @@ module processor(
   input  reset,
   input  exec,
   
-  input inpval1,
-  input inpval2,
+  input [15:0] inpval1, inpval2,
   
   input  [15:0] ir_m_q,
   output reg [15:0] ir_m_data,
@@ -80,7 +79,7 @@ module processor(
   wire [1:0] p3_op1 = p3_IR[15:14];
   wire [3:0] p3_op3 = p3_IR[7:4];
   reg [15:0] p3_AR, p3_BR;
-  wire signed [15:0] p3_DR;
+  wire [15:0] p3_DR;
   reg [15:0] p3_D;
   
   reg p3_RegWrite, p3_MemtoReg, p3_RegDst, p3_ALUSrc, p3_PCSrc;
@@ -128,7 +127,7 @@ module processor(
   
   reg [15:0] p4_PC, p4_IR;
   reg [15:0] p4_D;
-  reg signed [15:0] p4_DR;
+  reg [15:0] p4_DR;
   reg [3:0] p4_SZCV; //TODO: SZCV is not pipeline register.
   reg [15:0] p4_MR;
   reg [15:0] p4_AR, p4_BR;
@@ -144,9 +143,12 @@ module processor(
   
   reg [11:0] p4_addr;
   reg [15:0] p4_data;
+  
+  wire is_input = (p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1100);
+  wire is_output = (p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1101);
   always @(posedge clock) begin
     p4_PC <= p3_PC; p4_IR <= p3_IR;
-    p4_DR <= p3_DR;
+    p4_D <= p3_D;
     p4_SZCV <= p3_SZCV;
     p4_AR <= p3_AR; p4_BR <= p3_BR;
     
@@ -165,14 +167,14 @@ module processor(
     end
     
     // Input
-    if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1100)) /* IN */ begin
-      p4_D <= (p3_D == 16'b0) ? inpval1 : inpval2;
+    if (is_input) /* IN */ begin
+      p4_DR <= (p3_IR[3:0] == 4'b0000) ? inpval1 : inpval2;
     end else begin
-      p4_D <= p3_D;
+      p4_DR <= p3_DR;
     end
     
     // Output
-    if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1101)) /* OUT */ begin
+    if (is_output) /* OUT */ begin
       outsel_ <= p3_IR[2:0];
       outdisplay_ <= 1;
     end else begin

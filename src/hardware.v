@@ -46,7 +46,7 @@ module hardware (
     .ir_m_rw(ir_m_wren), .ir_m_addr(ir_m_addr),
     .main_m_q(main_m_q), .main_m_data(main_m_data),
     .main_m_rw(main_m_wren), .main_m_addr(main_m_addr),
-    .inpval1(inpval1), .inpval2(inpval2),
+    .inpval1(inpval1), .inpval2({8'b0, inpval2[7:0]}),
     .outval1(outval1), .outval2(outval2), .outsel(outsel), .outdisplay(outdisplay));
   
   out out_ (.clock(clock), .reset(~n_reset),

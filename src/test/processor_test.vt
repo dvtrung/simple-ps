@@ -13,7 +13,7 @@ module processor_test();
   wire [11:0] ir_m_addr;
   wire ir_m_wren;
   
-  ram_inc #("../../memories/test_ld_st.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/test_output.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~clock),
     .q(ir_m_q)
@@ -40,6 +40,7 @@ module processor_test();
     .ir_m_rw(ir_m_wren), .ir_m_addr(ir_m_addr),
     .main_m_q(main_m_q), .main_m_data(main_m_data),
     .main_m_rw(main_m_wren), .main_m_addr(main_m_addr),
+    .inpval1(inpval1), .inpval2(inpval2),
     .outval1(outval1), .outval2(outval2), .outsel(outsel));
 
   wire [15:0] r0 = processor_.register_.r[0];
@@ -64,16 +65,19 @@ module processor_test();
   
   wire stall = processor_.stall;
   
+  wire p5_RegWrite = processor_.p5_RegWrite;
   wire [2:0] write_addr = processor_.register_.write_addr;
   wire [15:0] write_data = processor_.register_.write_data;
   
-  wire p5_RegDst = processor_.p5_RegDst;
-  wire [15:0] p4_D = processor_.p4_D;
-  wire [15:0] p3_D = processor_.p3_D;
+  wire [15:0] p5_MDR = processor_.p5_MDR;
   
-  wire [15:0] p4_AR = processor_.p4_AR;
-  wire [15:0] p4_BR = processor_.p4_BR;
+  wire [15:0] p5_DR = processor_.p5_DR;
   wire [15:0] p4_DR = processor_.p4_DR;
+  
+  wire [15:0] inpval1_ = processor_.inpval1;
+  wire [15:0] inpval2_ = processor_.inpval2;
+  
+  wire is_input = processor_.is_input;
   
   initial begin
     clock <= 0;

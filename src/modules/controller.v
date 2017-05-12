@@ -17,7 +17,7 @@ module controller(
         || op3 == 4'b1111 /* HLT */))
     ||  (op1 == 2'b10 && op2 == 3'b000 /* LI */));
         
-  assign MemtoReg = (op1 == 2'b00 /* LD */) || (op1 == 2'b11 && op3 == 4'b1100 /* IN */);
+  assign MemtoReg = (op1 == 2'b00 /* LD */);
       
   assign RegDst = (op1 != 2'b00); /* Except LD */
   
