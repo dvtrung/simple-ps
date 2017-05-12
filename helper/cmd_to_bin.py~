@@ -66,6 +66,9 @@ for line in sys.stdin:
   if a[0] == "hlt":
     assert len(a) == 1, "unmatchd args"
     res = ("1100000011110000");
+  if a[0] == "nop":
+    assert len(a) == 1, "unmatchd args"
+    res = "0000000000000000";
   if a[0] in CODE3:
     assert len(a) == 4, "unmatchd args"
     res = CODE3[a[0]] + dec_to_bin(a[1], 3) + dec_to_bin(a[3], 3) + dec_to_bin(a[2], 8)

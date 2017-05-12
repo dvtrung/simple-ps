@@ -19,7 +19,7 @@ module register (
       end
     end
   end
-
+  
   assign ar = r[ra];
   assign br = r[rb];
 endmodule

@@ -109,7 +109,7 @@ module processor(
   
   wire [3:0] p3_SZCV;
   alu_shifter alu_shifter_(
-    .a(p3_AR), .b(p3_ALUSrc ? p3_D : p3_BR), 
+    .b(p3_AR), .a(p3_ALUSrc ? p3_D : p3_BR), 
     .shift_d(p3_IR[3:0]), .op(p3_op3),
     .res(p3_DR), .szcv(p3_SZCV)
   );
@@ -141,7 +141,7 @@ module processor(
     p4_PC <= p3_PC; p4_IR <= p3_IR;
     p4_DR <= p3_DR;
     p4_SZCV <= p3_SZCV;
-    p4_D = p3_D;
+    p4_D <= p3_D;
     p4_AR <= p3_AR; p4_BR <= p3_BR;
     
     p4_RegWrite <= p3_RegWrite;
@@ -168,7 +168,7 @@ module processor(
     
     // Input
     if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1100)) /* IN */ begin
-      p4_D = (p3_D == 16'b0) ? inpval1 : inpval2;
+      p4_D <= (p3_D == 16'b0) ? inpval1 : inpval2;
     end
     
     // Output
@@ -216,7 +216,7 @@ module processor(
   end
   
   register register_(
-    .clock(clock), .reset(reset),
+    .clock(~clock), .reset(reset),
     .ra(p2_r1), .rb(p2_r2 /*r_wb*/),
     .RegWrite(stall ? 0 : p5_RegWrite), 
     .write_addr(p5_RegDst ? p5_IR[10:8] : p5_IR[13:11]),

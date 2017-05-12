@@ -1,14 +1,36 @@
-li 0 0
-li 1 1
-li 2 5
-li 3 2
+li 0 1
+li 1 2
 li 4 5
 li 5 2
 li 6 7
 li 7 8
-out 2 3 4
-out 4 5 5
+
+li 2 5
+li 3 2
+nop
+nop
+out 2 3 2
+
+li 2 5
+li 3 2
 add 2 3
-sub 4 5
-out 0 1 0
-out 2 4 6
+nop
+mov 2 4
+li 2 5
+nop
+sub 2 3
+nop
+nop
+out 4 2 4
+
+li 2 5
+li 3 2
+and 2 3
+nop
+mov 2 4
+li 2 5
+nop
+or 2 3
+nop
+nop
+out 4 2 5
