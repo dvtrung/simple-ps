@@ -14,7 +14,7 @@ module hardware (
   wire ir_m_wren;
   
   reg s_clock;
-  ram_inc #("../../memories/test_output.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/test_ld_st.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~clock),
     .q(ir_m_q)
