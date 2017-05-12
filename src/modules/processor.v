@@ -133,7 +133,7 @@ module processor(
     end
   end
   
-  wire [11:0] p3_m_addr = p3_D + p3_BR;
+  wire [11:0] p3_m_addr = p3_D + p3_AR;
   
   ///////////////////////////
   //   P4
@@ -172,7 +172,7 @@ module processor(
     // Store
     main_m_addr <= p3_m_addr;
     if (p3_IR[15:14] == 2'b01) begin /* ST */
-        main_m_data <= p3_AR;
+        main_m_data <= p3_BR;
         main_m_rw <= 1;
     end else begin
         main_m_rw <= 0;
@@ -216,9 +216,9 @@ module processor(
   
   register register_(
     .clock(~clock), .reset(reset),
-    .ra(p2_r1), .rb(p2_r2 /*r_wb*/),
+    .ra(p2_r1), .rb(p2_r2),
     .RegWrite(p5_RegWrite), 
-    .write_addr(p5_RegDst ? p5_IR[10:8] : p5_IR[13:11]),
+    .write_addr(p5_IR[10:8]),
 
     .write_data(p5_MemtoReg ? p5_MDR : p5_DR),
     .ar(p2_AR), .br(p2_BR));
