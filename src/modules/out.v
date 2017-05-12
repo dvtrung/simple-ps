@@ -27,7 +27,6 @@ module out (
   reg outdisplay_flag1_, outdisplay_flag2_;
   reg outdisplay_flag1[0:7];
   reg outdisplay_flag2[0:7];
-  reg [3:0] outsel_flag = 4'b0000;
   
   reg [15:0] arr_outval1 [0:7];
   reg [15:0] arr_outval2 [0:7];
@@ -35,7 +34,7 @@ module out (
   reg [15:0] outval1_;
   reg [15:0] outval2_;
   
-  reg [2:0] outsel2 = 3'bXXX;
+  reg [2:0] outsel2;
   
   reg[2:0] refresh = 3'b000;
   
@@ -61,34 +60,18 @@ module out (
       outdisplay_flag2[6] <= 0; outdisplay_flag2[7] <= 0;
       refresh <= 3'b111;
     end else begin
-      //if (outsel_flag == 4'b0000) begin 
-      //  outsel2 <= outsel2 + 1;
-      //end else begin
-      //  outval1_ <= arr_outval1[outsel2];
-      //  outval2_ <= arr_outval2[outsel2];
-      //  outdisplay_flag1_ <= outdisplay_flag1[outsel2];
-      //  outdisplay_flag2_ <= outdisplay_flag2[outsel2];
-      //end
-      //outsel_flag <= outsel_flag + 1;
       if (outdisplay) begin
-        //outsel2 <= outsel;
-        //if (outval1[15] !== 1'bX) begin
-          arr_outval1[outsel] <= outval1;
-          outdisplay_flag1[outsel] <= 1;
-        //end
-        //if (outval2[15] !== 1'bX) begin
-          arr_outval2[outsel] <= outval2;
-          outdisplay_flag2[outsel] <= 1;
-        //end
-      end else begin
-        //
+        arr_outval1[outsel] <= outval1;
+        outdisplay_flag1[outsel] <= 1;
+        arr_outval2[outsel] <= outval2;
+        outdisplay_flag2[outsel] <= 1;
       end
       outsel2 <= outsel2 + 1;
       
       //if (refresh != 3'b0) begin
-          //outsel2 <= refresh;
-          //refresh <= refresh - 1;
-        //end
+        //outsel2 <= refresh;
+        //refresh <= refresh - 1;
+      //end
     end
   end
   
