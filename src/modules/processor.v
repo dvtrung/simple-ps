@@ -106,7 +106,7 @@ module processor(
   
   wire [3:0] p3_SZCV;
   alu_shifter alu_shifter_(
-    .a(p3_AR), .b(p3_ALUSrc ? p3_D : p3_BR), 
+    .a(p3_ALUSrc ? p3_D : p3_AR), .b(p3_BR),
     .shift_d(p3_IR[3:0]), .op(p3_op3),
     .res(p3_DR), .szcv(p3_SZCV)
   );
@@ -119,6 +119,9 @@ module processor(
       //TODO: PC changed in p1 and **p3**
     end
   end
+  
+  wire [11:0] p3_m_addr = p3_D + p3_BR;
+  
   ///////////////////////////
   //   P4
   ///////////////////////////
@@ -152,15 +155,13 @@ module processor(
     p4_RegDst <= p3_RegDst;
     p4_PCSrc <= p3_PCSrc;
 
-    // Load / store
-    if (p3_IR[15:14] == 2'b00) begin /* LD */
-        main_m_data <= p4_DR;
+    // Store
+    main_m_addr <= p3_m_addr;
+    if (p3_IR[15:14] == 2'b01) begin /* ST */
+        main_m_data <= p3_AR;
         main_m_rw <= 1;
     end else begin
         main_m_rw <= 0;
-    end
-    if (p3_IR[15:14] == 2'b10) begin /* ST */
-        main_m_addr <= p4_DR;
     end
     
     // Input
@@ -185,7 +186,7 @@ module processor(
   
   reg [3:0] p5_SZCV;
   reg [15:0] p5_DR;
-  wire [15:0] p5_MDR = (p4_IR[15:14] == 2'b00 /* LD */) ? main_m_q : p4_D;
+  wire [15:0] p5_MDR = main_m_q;
   reg [15:0] p5_IR;
   
   reg p5_RegWrite, p5_MemtoReg, p5_RegDst, p5_PCSrc;
@@ -193,7 +194,7 @@ module processor(
   always @(posedge clock) begin
     p5_IR <= p4_IR;
     p5_SZCV <= p4_SZCV;
-    p5_DR <= p4_DR;
+    p5_DR <= (p4_IR[15:11] == 5'b10000 /*LI*/) ? p4_D : p4_DR;
     
     p5_RegWrite <= p4_RegWrite;
     p5_MemtoReg <= p4_MemtoReg;
@@ -208,6 +209,6 @@ module processor(
     .write_addr(p5_RegDst ? p5_IR[10:8] : p5_IR[13:11]),
 
     .write_data(p5_MemtoReg ? p5_MDR : p5_DR),
-    .ar(p2_BR), .br(p2_AR));
+    .ar(p2_AR), .br(p2_BR));
 
 endmodule
