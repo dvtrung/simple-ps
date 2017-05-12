@@ -70,6 +70,8 @@ module processor(
     p2_PCSrc <= p1_PCSrc;
   end
   
+  wire [15:0] p2_D = sign_ext(p2_IR[7:0]);
+  
   ///////////////////////////
   //   P3
   ///////////////////////////
@@ -93,7 +95,7 @@ module processor(
     
   always @(posedge clock) begin
     p3_PC <= p2_PC; p3_IR <= p2_IR;
-    p3_D <= sign_ext(p2_IR[7:0]);
+    p3_D <= p2_D;
     p3_AR <= p2_AR; p3_BR <= p2_BR;
 
     p3_RegWrite <= p2_RegWrite;
@@ -114,8 +116,11 @@ module processor(
     if (reset) begin
       p1_PC = 0;
     end else if (~stall) begin
-      p1_PC <= p1_PC + 1;
-      //TODO: PC changed in p1 and **p3**
+      if (p2_IR[15:11] == 5'b10100 /*B*/) begin
+        p1_PC <= p2_PC + p2_D;
+      end else begin
+        p1_PC <= p1_PC + 1;
+      end
     end
   end
   
