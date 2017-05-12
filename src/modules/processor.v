@@ -105,21 +105,28 @@ module processor(
     p3_PCSrc <= p2_PCSrc;
   end
   
-  wire [3:0] p3_SZCV;
+  wire [3:0] SZCV;
   alu_shifter alu_shifter_(
     .a(p3_ALUSrc ? p3_D : p3_AR), .b(p3_BR),
     .shift_d(p3_IR[3:0]), .op(p3_op3),
-    .res(p3_DR), .szcv(p3_SZCV)
+    .res(p3_DR), .szcv(SZCV)
   );
-
+  
+  reg jumped;
   always @(posedge clock or posedge reset) begin
     if (reset) begin
       p1_PC = 0;
     end else if (~stall) begin
-      if (p2_IR[15:11] == 5'b10100 /*B*/) begin
+      if (p2_IR[15:11] == 5'b10100 /*B*/ ||
+          p2_IR[15:8] == 8'b10111000 /*BE*/ & SZCV[2] ||
+          p2_IR[15:8] == 8'b10111001 /*BLT*/ & (SZCV[3] ^ SZCV[0]) ||
+          p2_IR[15:8] == 8'b10111010 /*BLE*/ & (SZCV[2] || (SZCV[3] ^ SZCV[0])) ||
+          p2_IR[15:8] == 8'b10111011 /*BNE*/ & (~ SZCV[2])) begin
         p1_PC <= p2_PC + p2_D;
+        jumped <= 1;
       end else begin
         p1_PC <= p1_PC + 1;
+        jumped <= 0;
       end
     end
   end
@@ -133,7 +140,6 @@ module processor(
   reg [15:0] p4_PC, p4_IR;
   reg [15:0] p4_D;
   reg [15:0] p4_DR;
-  reg [3:0] p4_SZCV; //TODO: SZCV is not pipeline register.
   reg [15:0] p4_MR;
   reg [15:0] p4_AR, p4_BR;
   wire [1:0] p4_op1 = p4_IR[15:14]; 
@@ -154,7 +160,6 @@ module processor(
   always @(posedge clock) begin
     p4_PC <= p3_PC; p4_IR <= p3_IR;
     p4_D <= p3_D;
-    p4_SZCV <= p3_SZCV;
     p4_AR <= p3_AR; p4_BR <= p3_BR;
     
     p4_RegWrite <= p3_RegWrite;
@@ -191,7 +196,6 @@ module processor(
   //   P5
   ///////////////////////////
   
-  reg [3:0] p5_SZCV;
   reg [15:0] p5_DR;
   wire [15:0] p5_MDR = main_m_q;
   reg [15:0] p5_IR;
@@ -200,7 +204,6 @@ module processor(
 
   always @(posedge clock) begin
     p5_IR <= p4_IR;
-    p5_SZCV <= p4_SZCV;
     p5_DR <= (p4_IR[15:11] == 5'b10000 /*LI*/) ? p4_D : p4_DR;
     
     p5_RegWrite <= p4_RegWrite;
