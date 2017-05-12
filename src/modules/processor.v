@@ -61,10 +61,9 @@ module processor(
   reg p2_RegWrite, p2_MemtoReg, p2_RegDst, p2_ALUSrc, p2_PCSrc;
   
   always @(posedge clock) begin
-    p2_PC <= p1_PC; 
-    p2_IR <= p1_IR;
-
+    p2_PC <= p1_PC; p2_IR <= p1_IR;
     // p2_AR, p2_BR <~ register in p5
+    
     p2_RegWrite <= p1_RegWrite;
     p2_MemtoReg <= p1_MemtoReg;
     p2_RegDst <= p1_RegDst;
@@ -95,7 +94,6 @@ module processor(
     
   always @(posedge clock) begin
     p3_PC <= p2_PC; p3_IR <= p2_IR;
-    
     p3_D <= sign_ext(p2_IR[7:0]);
     p3_AR <= p2_AR; p3_BR <= p2_BR;
 
@@ -144,8 +142,7 @@ module processor(
   reg [11:0] p4_addr;
   reg [15:0] p4_data;
   always @(posedge clock) begin
-    p4_PC <= p3_PC;
-    p4_IR <= p3_IR;
+    p4_PC <= p3_PC; p4_IR <= p3_IR;
     p4_DR <= p3_DR;
     p4_SZCV <= p3_SZCV;
     p4_AR <= p3_AR; p4_BR <= p3_BR;
