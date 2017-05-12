@@ -21,7 +21,7 @@ module controller(
       
   assign RegDst = (op1 != 2'b00); /* Except LD */
   
-  assign ALUSrc = (op3[3:2] == 2'b10);
+  assign ALUSrc = (op1 == 2'b00 /* LD */);
   
   assign PCSrc = (op1 == 2'b10 && op2 == 3'b100)
               || (op1 == 2'b10 && instr[13:11] == 3'b111);

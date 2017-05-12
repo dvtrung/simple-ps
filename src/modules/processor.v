@@ -81,7 +81,6 @@ module processor(
   wire [1:0] p3_op1 = p3_IR[15:14];
   wire [3:0] p3_op3 = p3_IR[7:4];
   reg [15:0] p3_AR, p3_BR;
-  wire [15:0] p3_DR;
   reg [15:0] p3_D;
   
   reg p3_RegWrite, p3_MemtoReg, p3_RegDst, p3_ALUSrc, p3_PCSrc;
@@ -105,13 +104,16 @@ module processor(
     p3_PCSrc <= p2_PCSrc;
   end
   
+  wire [15:0] alu_res;
   wire [3:0] SZCV;
   alu_shifter alu_shifter_(
-    .a(p3_ALUSrc ? p3_D : p3_AR), .b(p3_BR),
+    .a(p3_ALUSrc ? p3_D : p3_AR),
+    .b(p3_BR),
     .shift_d(p3_IR[3:0]), .op(p3_op3),
-    .res(p3_DR), .szcv(SZCV)
+    .res(alu_res), .szcv(SZCV)
   );
   
+  wire [15:0] p3_DR = (p3_IR[15:11] == 5'b10000 /*LI*/) ? p3_D : alu_res;
   reg jumped;
   always @(posedge clock or posedge reset) begin
     if (reset) begin
@@ -204,7 +206,7 @@ module processor(
 
   always @(posedge clock) begin
     p5_IR <= p4_IR;
-    p5_DR <= (p4_IR[15:11] == 5'b10000 /*LI*/) ? p4_D : p4_DR;
+    p5_DR <= p4_DR;
     
     p5_RegWrite <= p4_RegWrite;
     p5_MemtoReg <= p4_MemtoReg;
