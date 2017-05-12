@@ -30,26 +30,26 @@ module alu_shifter(
         szcv_[1] = res__[16];
       end
       4'b1000: begin // SLL: Shift left logical
-        res_ <= a << (shift_d - 1);
+        res_ <= b << (shift_d - 1);
         szcv_[1] <= res_[15];
         res_ <= res_ << 1;
       end
       4'b1001: begin // SLR: Shift left rotate
-        res_ <= a << (shift_d - 1);
+        res_ <= b << (shift_d - 1);
         szcv_[1] <= res_[15];
         res_ <= res_ << 1;
-        res_ <= res_ | (a >> - shift_d); 
+        res_ <= res_ | (b >> - shift_d); 
       end
       4'b1010: begin // SRL: Shift right logical
-        res_ <= a >> (shift_d - 1);
+        res_ <= b >> (shift_d - 1);
         szcv_[1] <= res_[0];
         res_ <= res_ >> 1;
       end
       4'b1011: begin // SRA: Shift right arithmetic
-        res_ <= a >> (shift_d - 1);
+        res_ <= b >> (shift_d - 1);
         szcv_[1] <= res_[0];
         res_ <= res_ >> 1;
-        res_ <= res_ | (a << - shift_d);
+        res_ <= res_ | (b << - shift_d);
       end
       default: szcv_[1] <= 0;
     endcase
