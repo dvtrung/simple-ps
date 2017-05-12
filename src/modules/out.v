@@ -72,14 +72,14 @@ module out (
       //outsel_flag <= outsel_flag + 1;
       if (outdisplay) begin
         //outsel2 <= outsel;
-        if (outval1[15] !== 1'bX) begin
+        //if (outval1[15] !== 1'bX) begin
           arr_outval1[outsel] <= outval1;
           outdisplay_flag1[outsel] <= 1;
-        end
-        if (outval2[15] !== 1'bX) begin
+        //end
+        //if (outval2[15] !== 1'bX) begin
           arr_outval2[outsel] <= outval2;
           outdisplay_flag2[outsel] <= 1;
-        end
+        //end
       end else begin
         //
       end

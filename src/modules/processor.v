@@ -176,7 +176,6 @@ module processor(
       outsel_ <= p3_IR[2:0];
       outdisplay_ <= 1;
     end else begin
-      outsel_ <= 3'bXXX;
       outdisplay_ <= 0;
     end
   end
