@@ -16,17 +16,17 @@ module alu_shifter(
         szcv_[1] <= res_[16]; // C: if carry exists
       end
       4'b0001: begin          // SUB
-        res_ <= a - b;
+        res_ <= b - a;
         szcv_[1] <= res_[16]; // C: if carry exists
       end
       4'b0010: res_ <= a & b;  // AND
       4'b0011: res_ <= a | b;  // OR
       4'b0100: res_ <= a ^ b;  // XOR
       
-      4'b0110: res_ <= b;      // MOV
+      4'b0110: res_ <= a;      // MOV
       
       4'b0101: begin          // CMP
-        res_ <= a;
+        res_ <= b;
         szcv_[1] = res__[16];
       end
       4'b1000: begin // SLL: Shift left logical

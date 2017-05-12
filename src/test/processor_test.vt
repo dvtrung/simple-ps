@@ -19,11 +19,15 @@ module processor_test();
 
   wire [15:0] outval1, outval2;
   wire [2:0] outsel;
+  
+  reg [15:0] inpval1;
+  reg [15:0] inpval2;
 
   processor processor_(
     .clock(clock), .reset(reset),
     .m_q(m_q),
     .m_addr(m_addr), .m_data(m_data), //.m_rw(m_wren),
+    .inpval1(inpval1), .inpval2(inpval2),
     .outval1(outval1), .outval2(outval2), .outsel(outsel)
   );
 
@@ -57,13 +61,17 @@ module processor_test();
   wire [15:0] p4_D = processor_.p4_D;
   wire [15:0] p3_D = processor_.p3_D;
   
-  wire [15:0] p5_DR = processor_.p5_DR;
+  wire [15:0] p4_AR = processor_.p4_AR;
+  wire [15:0] p4_BR = processor_.p4_BR;
+  wire [15:0] p4_DR = processor_.p4_DR;
   
   initial begin
     clock <= 0;
     reset <= 1;
     # 40
     reset <= 0;
+    inpval1 <= 16'b0000000001011010;
+    inpval2 <= 16'b0000000000001010;
     # 10000
     $finish();
   end

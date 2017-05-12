@@ -109,7 +109,7 @@ module processor(
   
   wire [3:0] p3_SZCV;
   alu_shifter alu_shifter_(
-    .b(p3_AR), .a(p3_ALUSrc ? p3_D : p3_BR), 
+    .a(p3_AR), .b(p3_ALUSrc ? p3_D : p3_BR), 
     .shift_d(p3_IR[3:0]), .op(p3_op3),
     .res(p3_DR), .szcv(p3_SZCV)
   );
@@ -141,7 +141,6 @@ module processor(
     p4_PC <= p3_PC; p4_IR <= p3_IR;
     p4_DR <= p3_DR;
     p4_SZCV <= p3_SZCV;
-    p4_D <= p3_D;
     p4_AR <= p3_AR; p4_BR <= p3_BR;
     
     p4_RegWrite <= p3_RegWrite;
@@ -169,6 +168,8 @@ module processor(
     // Input
     if ((p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1100)) /* IN */ begin
       p4_D <= (p3_D == 16'b0) ? inpval1 : inpval2;
+    end else begin
+      p4_D <= p3_D;
     end
     
     // Output
