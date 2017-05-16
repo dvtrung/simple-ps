@@ -214,6 +214,7 @@ module processor(
     p5_PCSrc <= p4_PCSrc;
   end
   
+  wire [15:0] reg_ar, reg_br;
   register register_(
     .clock(~clock), .reset(reset),
     .ra(p2_r1), .rb(p2_r2),
@@ -221,6 +222,23 @@ module processor(
     .write_addr(p5_IR[10:8]),
 
     .write_data(p5_MemtoReg ? p5_MDR : p5_DR),
-    .ar(p2_AR), .br(p2_BR));
-
+    .ar(reg_ar), .br(reg_br));
+  
+  function [15:0]  fetch_reg;
+    input [2:0]  regnum, p3_num, p4_num;
+    input [15:0] regout, p3_DR, p4_DR;
+  begin
+    if (p3_RegWrite & (p3_num == regnum)) begin
+      fetch_reg = p3_DR;
+    end else if (p4_RegWrite & (p4_num == regnum)) begin
+      fetch_reg = p4_DR;
+    end else begin
+      fetch_reg = regout;
+    end
+  end
+  endfunction
+  
+  assign p2_AR = fetch_reg(p2_r1, p3_IR[10:8], p4_IR[10:8], reg_ar, p3_DR, p4_DR);
+  assign p2_BR = fetch_reg(p2_r2, p3_IR[10:8], p4_IR[10:8], reg_br, p3_DR, p4_DR);
+  
 endmodule
