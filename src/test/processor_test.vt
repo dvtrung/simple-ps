@@ -13,7 +13,7 @@ module processor_test();
   wire [11:0] ir_m_addr;
   wire ir_m_wren;
   
-  ram_inc #("../../memories/test_all_inst.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/merge_sort.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~clock),
     .q(ir_m_q)
@@ -23,7 +23,7 @@ module processor_test();
   wire [11:0] main_m_addr;
   wire main_m_wren;
   
-  ram_inc #("../../memories/memory_inc.mif") main_ram_inc_ (
+  ram_inc #("../../memories/memory_mini_sort.mif") main_ram_inc_ (
     .data(main_m_data), .wren(main_m_wren), .address(main_m_addr),
     .clock(~clock),
     .q(main_m_q)
@@ -86,7 +86,7 @@ module processor_test();
     reset <= 0;
     inpval1 <= 16'b0000000001011010;
     inpval2 <= 16'b0000000000001010;
-    # 10000
+    # 200000
     $finish();
   end
 

@@ -15,18 +15,18 @@ module alu(
         szcv_[1] <= res_[16]; // C: if carry exists
       end
       4'b0001: begin          // SUB
-        res_ <= a - b;
+        res_ <= b - a;
         szcv_[1] <= res_[16]; // C: if carry exists
       end
       4'b0010: res_ <= a & b;  // AND
       4'b0011: res_ <= a | b;  // OR
       4'b0100: res_ <= a ^ b;  // XOR
       
-      4'b0110: res_ <= b;      // MOV
+      4'b0110: res_ <= a;      // MOV
       
       4'b0101: begin          // CMP
-        res_ <= a;
-        szcv_[1] = res__[16];
+        res_ <= b;
+        szcv_[1] = res_[16];
       end
       4'b1000: begin // SLL: Shift left logical
         res_ <= a << (b - 1);
@@ -53,13 +53,13 @@ module alu(
       default: szcv_[1] <= 0;
     endcase
     
-    szcv_[3] <= (res_[15] == 1);  // S: if negative
-    szcv_[2] <= (res_ == 0); // Z: if equal to zero
-    
-    if (op == 4'b0101) begin // CMP
-      res__ <= a - b;
+    if (op = 4'b0101 /*CMP*/) begin
+      szcv_[3] <= (res_[15] == 1);  // S: if negative
+      szcv_[2] <= (res_ == 0); // Z: if equal to zero
+    end else begin
+      szcv_[3] <= ((b - a)[15] == 1);  // S: if negative
+      szcv_[2] <= (res_ == 0); // Z: if equal to zero
     end
-    
     szcv_[0] = 0;           // V: if overflow
     if (op == 4'b0000) begin // + operator
       // if a and b have the same sign but res_ not
