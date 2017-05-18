@@ -24,7 +24,7 @@ module hardware (
   wire [11:0] main_m_addr;
   wire main_m_wren;
   
-  ram_inc #("../../memories/test_output.mif") main_ram_inc_ (
+  ram_inc #("../../memories/test_stall.mif") main_ram_inc_ (
     .data(main_m_data), .wren(main_m_wren), .address(main_m_addr),
     .clock(~clock),
     .q(main_m_q)
