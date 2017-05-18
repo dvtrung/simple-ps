@@ -13,7 +13,7 @@ module processor_test();
   wire [11:0] ir_m_addr;
   wire ir_m_wren;
   
-  ram_inc #("../../memories/alu.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/test_all_inst.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~clock),
     .q(ir_m_q)

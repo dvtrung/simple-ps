@@ -6,7 +6,8 @@ module alu_shifter(
   output [3:0] szcv
   );
   
-  reg [16:0] res_; reg[16:0] res__;
+  reg [15:0] reg_d1, reg_d2;
+  reg [16:0] res_, res__, reg_d; 
   reg [3:0] szcv_;
   
   always @(*) begin
@@ -30,26 +31,28 @@ module alu_shifter(
         szcv_[1] = res__[16];
       end
       4'b1000: begin // SLL: Shift left logical
-        res_ <= b << (shift_d - 1);
-        szcv_[1] <= res_[15];
-        res_ <= res_ << 1;
+        res_ <= b << shift_d;
+        reg_d = b << (shift_d - 1);
+        szcv_[1] = reg_d[15];
       end
       4'b1001: begin // SLR: Shift left rotate
-        res_ <= b << (shift_d - 1);
-        szcv_[1] <= res_[15];
-        res_ <= res_ << 1;
-        res_ <= res_ | (b >> - shift_d); 
+        reg_d1 = b << shift_d;
+        reg_d2 = b >> -shift_d;
+        res_ = reg_d1 | reg_d2;
+        reg_d = b << (shift_d - 1);
+        szcv_[1] = reg_d[15];
       end
       4'b1010: begin // SRL: Shift right logical
-        res_ <= b >> (shift_d - 1);
-        szcv_[1] <= res_[0];
-        res_ <= res_ >> 1;
+        reg_d1 = b >> shift_d;
+        res_ = reg_d1;
+        reg_d = b >> (shift_d - 1);
+        szcv_[1] = reg_d[0];
       end
       4'b1011: begin // SRA: Shift right arithmetic
-        res_ <= b >> (shift_d - 1);
-        szcv_[1] <= res_[0];
-        res_ <= res_ >> 1;
-        res_ <= res_ | (b << - shift_d);
+        reg_d1 = b >>> shift_d;
+        res_ = reg_d1;
+        reg_d = b >> (shift_d - 1);
+        szcv_[1] = reg_d[0];
       end
       default: szcv_[1] <= 0;
     endcase
