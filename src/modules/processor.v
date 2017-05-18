@@ -8,7 +8,7 @@ module processor(
   input  [15:0] ir_m_q,
   output reg [15:0] ir_m_data,
   output ir_m_rw,
-  output reg [11:0] ir_m_addr,
+  output [11:0] ir_m_addr,
   
   input  [15:0] main_m_q,
   output reg [15:0] main_m_data,
@@ -20,6 +20,8 @@ module processor(
   output [2:0] outsel,        // if output instruction
   output outdisplay
   );
+  
+  reg stall = 0;
     
   ///////////////////////////
   //   P1
@@ -28,10 +30,12 @@ module processor(
   reg [15:0] p1_PC;
   assign ir_m_rw = 0;
   wire [15:0] p1_IR = ir_m_q;
+  wire [2:0] p1_r1 = p1_IR[13:11];
+  wire [2:0] p1_r2 = p1_IR[10:8];
   
   wire p1_RegWrite, p1_MemtoReg, p1_RegDst, p1_ALUSrc, p1_PCSrc;
   
-  reg stall = 0; // stop to increment PC
+  assign ir_m_addr = p1_PC;
   
   controller controller_(
     .clock(clock), .reset(reset), .exec(exec),
@@ -44,7 +48,7 @@ module processor(
   );
   
   always @(posedge clock) begin
-    ir_m_addr <= p1_PC;
+    //ir_m_addr <= p1_PC;
   end
   
   ///////////////////////////
@@ -60,14 +64,16 @@ module processor(
   reg p2_RegWrite, p2_MemtoReg, p2_RegDst, p2_ALUSrc, p2_PCSrc;
   
   always @(posedge clock) begin
-    p2_PC <= p1_PC; p2_IR <= p1_IR;
-    // p2_AR, p2_BR <~ register in p5
-    
-    p2_RegWrite <= p1_RegWrite;
-    p2_MemtoReg <= p1_MemtoReg;
-    p2_RegDst <= p1_RegDst;
-    p2_ALUSrc <= p1_ALUSrc;
-    p2_PCSrc <= p1_PCSrc;
+    if (~stall) begin
+      p2_PC <= p1_PC; p2_IR <= p1_IR;
+      // p2_AR, p2_BR <~ register in p5
+      
+      p2_RegWrite <= p1_RegWrite;
+      p2_MemtoReg <= p1_MemtoReg;
+      p2_RegDst <= p1_RegDst;
+      p2_ALUSrc <= p1_ALUSrc;
+      p2_PCSrc <= p1_PCSrc;
+    end
   end
   
   wire [15:0] p2_D = sign_ext(p2_IR[7:0]);
@@ -80,6 +86,8 @@ module processor(
   reg [15:0] p3_IR;
   wire [1:0] p3_op1 = p3_IR[15:14];
   wire [3:0] p3_op3 = p3_IR[7:4];
+  wire [2:0] p3_r1 = p3_IR[13:11];
+  wire [2:0] p3_r2 = p3_IR[10:8];
   reg [15:0] p3_AR, p3_BR;
   reg [15:0] p3_D;
   
@@ -91,17 +99,29 @@ module processor(
       sign_ext = {{8{in[7]}}, in[7:0]};
     end
   endfunction
+  
+  // Hazard detection unit (for stall)
+  always @(posedge clock) begin
+    if ((p2_IR[15:14] == 2'b00 && (p2_r1 != 3'b0 || p2_r2 != 3'b0) /* LD (~MemRead) */) && 
+      ((p1_r1 == p2_r2) || (p1_r2 == p2_r2))) begin 
+      stall <= 1;
+    end else if (stall == 1) begin 
+      stall <= 0;
+    end
+  end
     
   always @(posedge clock) begin
-    p3_PC <= p2_PC; p3_IR <= p2_IR;
-    p3_D <= p2_D;
-    p3_AR <= p2_AR; p3_BR <= p2_BR;
+    if (~stall) begin
+      p3_PC <= p2_PC; p3_IR <= p2_IR;
+      p3_D <= p2_D;
+      p3_AR <= p2_AR; p3_BR <= p2_BR;
 
-    p3_RegWrite <= p2_RegWrite;
-    p3_MemtoReg <= p2_MemtoReg;
-    p3_RegDst <= p2_RegDst;
-    p3_ALUSrc <= p2_ALUSrc;
-    p3_PCSrc <= p2_PCSrc;
+      p3_RegWrite <= p2_RegWrite;
+      p3_MemtoReg <= p2_MemtoReg;
+      p3_RegDst <= p2_RegDst;
+      p3_ALUSrc <= p2_ALUSrc;
+      p3_PCSrc <= p2_PCSrc;
+    end
   end
   
   wire [15:0] alu_res;
@@ -118,17 +138,19 @@ module processor(
   always @(posedge clock or posedge reset) begin
     if (reset) begin
       p1_PC = 0;
-    end else if (~stall) begin
-      if (p2_IR[15:11] == 5'b10100 /*B*/ ||
-          p2_IR[15:8] == 8'b10111000 /*BE*/ & SZCV[2] ||
-          p2_IR[15:8] == 8'b10111001 /*BLT*/ & (SZCV[3] ^ SZCV[0]) ||
-          p2_IR[15:8] == 8'b10111010 /*BLE*/ & (SZCV[2] || (SZCV[3] ^ SZCV[0])) ||
-          p2_IR[15:8] == 8'b10111011 /*BNE*/ & (~ SZCV[2])) begin
-        p1_PC <= p2_PC + p2_D;
-        jumped <= 1;
-      end else begin
-        p1_PC <= p1_PC + 1;
-        jumped <= 0;
+    end else begin
+      if (~stall) begin
+        if (p2_IR[15:11] == 5'b10100 /*B*/ ||
+            p2_IR[15:8] == 8'b10111000 /*BE*/ & SZCV[2] ||
+            p2_IR[15:8] == 8'b10111001 /*BLT*/ & (SZCV[3] ^ SZCV[0]) ||
+            p2_IR[15:8] == 8'b10111010 /*BLE*/ & (SZCV[2] || (SZCV[3] ^ SZCV[0])) ||
+            p2_IR[15:8] == 8'b10111011 /*BNE*/ & (~ SZCV[2])) begin
+          p1_PC <= p2_PC + p2_D;
+          jumped <= 1;
+        end else begin
+          p1_PC <= p1_PC + 1;
+          jumped <= 0;
+        end
       end
     end
   end
@@ -160,37 +182,39 @@ module processor(
   wire is_input = (p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1100);
   wire is_output = (p3_IR[15:14] == 2'b11) && (p3_IR[7:4] == 4'b1101);
   always @(posedge clock) begin
-    p4_PC <= p3_PC; p4_IR <= p3_IR;
-    p4_D <= p3_D;
-    p4_AR <= p3_AR; p4_BR <= p3_BR;
-    
-    p4_RegWrite <= p3_RegWrite;
-    p4_MemtoReg <= p3_MemtoReg;
-    p4_RegDst <= p3_RegDst;
-    p4_PCSrc <= p3_PCSrc;
+    if (~stall) begin
+      p4_PC <= p3_PC; p4_IR <= p3_IR;
+      p4_D <= p3_D;
+      p4_AR <= p3_AR; p4_BR <= p3_BR;
+      
+      p4_RegWrite <= p3_RegWrite;
+      p4_MemtoReg <= p3_MemtoReg;
+      p4_RegDst <= p3_RegDst;
+      p4_PCSrc <= p3_PCSrc;
 
-    // Store
-    main_m_addr <= p3_m_addr;
-    if (p3_IR[15:14] == 2'b01) begin /* ST */
-        main_m_data <= p3_BR;
-        main_m_rw <= 1;
-    end else begin
-        main_m_rw <= 0;
-    end
-    
-    // Input
-    if (is_input) /* IN */ begin
-      p4_DR <= (p3_IR[3:0] == 4'b0000) ? inpval1 : inpval2;
-    end else begin
-      p4_DR <= p3_DR;
-    end
-    
-    // Output
-    if (is_output) /* OUT */ begin
-      outsel_ <= p3_IR[2:0];
-      outdisplay_ <= 1;
-    end else begin
-      outdisplay_ <= 0;
+      // Store
+      main_m_addr <= p3_m_addr;
+      if (p3_IR[15:14] == 2'b01) begin /* ST */
+          main_m_data <= p3_BR;
+          main_m_rw <= 1;
+      end else begin
+          main_m_rw <= 0;
+      end
+      
+      // Input
+      if (is_input) /* IN */ begin
+        p4_DR <= (p3_IR[3:0] == 4'b0000) ? inpval1 : inpval2;
+      end else begin
+        p4_DR <= p3_DR;
+      end
+      
+      // Output
+      if (is_output) /* OUT */ begin
+        outsel_ <= p3_IR[2:0];
+        outdisplay_ <= 1;
+      end else begin
+        outdisplay_ <= 0;
+      end
     end
   end
   
@@ -205,13 +229,16 @@ module processor(
   reg p5_RegWrite, p5_MemtoReg, p5_RegDst, p5_PCSrc;
 
   always @(posedge clock) begin
-    p5_IR <= p4_IR;
-    p5_DR <= p4_DR;
-    
-    p5_RegWrite <= p4_RegWrite;
-    p5_MemtoReg <= p4_MemtoReg;
-    p5_RegDst <= p4_RegDst;
-    p5_PCSrc <= p4_PCSrc;
+    if (~stall) begin
+      p5_IR <= p4_IR;
+      p5_DR <= p4_DR;
+      
+      p5_RegWrite <= p4_RegWrite;
+      // TODO: set p5_MemWrite to 0
+      p5_MemtoReg <= p4_MemtoReg;
+      p5_RegDst <= p4_RegDst;
+      p5_PCSrc <= p4_PCSrc;
+    end
   end
   
   wire [15:0] reg_ar, reg_br;
@@ -240,5 +267,4 @@ module processor(
   
   assign p2_AR = fetch_reg(p2_r1, p3_IR[10:8], p4_IR[10:8], reg_ar, p3_DR, p4_DR);
   assign p2_BR = fetch_reg(p2_r2, p3_IR[10:8], p4_IR[10:8], reg_br, p3_DR, p4_DR);
-  
 endmodule
