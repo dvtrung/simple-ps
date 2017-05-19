@@ -9,20 +9,22 @@ module controller(
   wire [2:0] op2 = instr[13:11];
   wire [3:0] op3 = instr[7:4];
   
-  assign RegWrite = (
+  assign RegWrite =
         (op1 == 2'b00 /* LD */)
     || ((op1 == 2'b11) && ~( /* Except */
            op3 == 4'b0101 /* CMP */
         || op3 == 4'b1101 /* OUT */
         || op3 == 4'b1110 /* NOP */
         || op3 == 4'b1111 /* HLT */))
-    ||  (op1 == 2'b10 && op2 == 3'b000 /* LI */));
+    ||  (op1 == 2'b10 && op2 == 3'b000 /* LI */)
+    ||  (op1 == 2'b10 && op2 == 3'b001 /* ADDI */);
         
   assign MemtoReg = (op1 == 2'b00 /* LD */);
       
   assign RegDst = (op1 != 2'b00); /* Except LD */
   
-  assign ALUSrc = (op1 == 2'b00 /* LD */);
+  assign ALUSrc = (op1 == 2'b00 /* LD */)
+    ||  (op1 == 2'b10 && op2 == 3'b001 /* ADDI */);
   
   assign PCSrc = (op1 == 2'b10 && op2 == 3'b100)
               || (op1 == 2'b10 && instr[13:11] == 3'b111);
