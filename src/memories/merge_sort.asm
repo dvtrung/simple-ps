@@ -32,34 +32,27 @@ add 2 4
 -- *l, *r
 ld 5 0 1
 ld 6 0 2
-nop
-nop
+
+-- nop
+-- nop
 
 -- l == s + size; :l_max
 mov 7 0
 add 7 4
 cmp 1 7
 be :l_max
-nop
-nop
 
 -- r == s + size + size; :use_l
 add 7 4
 cmp 2 7
 be :use_l
-nop
-nop
 
 -- l < r; :use_l
 cmp 5 6
 ble :use_l
-nop
-nop
 
 -- :use_r
 b 0 :use_r
-nop
-nop
 
 :l_max
 
@@ -67,8 +60,6 @@ nop
 add 7 4
 cmp 2 7
 be :compare_end
-nop
-nop
 
 :use_l
 
@@ -82,8 +73,6 @@ add 1 7
 
 -- :compare
 b 0 :compare
-nop
-nop
 
 :use_r
 
@@ -96,8 +85,6 @@ add 3 7
 add 2 7
 
 b 0 :compare
-nop
-nop
 
 :compare_end
 
@@ -108,24 +95,16 @@ mov 0 2
 li 7 64
 cmp 0 7
 be :next_back
-nop
-nop
 
 -- s == 32; :next_foward
 li 7 32
 cmp 0 7
 be :next_foward
-nop
-nop
 
 -- l = s ; r += size; :compare
 mov 1 0
 add 2 4
 b 0 :compare
-nop
-nop
-
-b 0 :start
 
 :next_back
 
@@ -144,13 +123,9 @@ li 7 1
 sll 7 5
 cmp 4 7
 be :final
-nop
-nop
 
 -- :start
 b 0 :start
-nop
-nop
 
 :next_foward
 
@@ -166,8 +141,6 @@ li 3 0
 
 -- :start
 b 0 :start
-nop
-nop
 
 :final
 
@@ -195,13 +168,10 @@ add 3 7
 li 7 64
 cmp 0 7
 bne :moving
-nop
-nop
 
 
+-- :end
 b 0 :end
-nop
-nop
 
 :end
 
@@ -209,3 +179,6 @@ li 7 170
 out 7 7 7
 
 b 0 :end
+
+nop
+nop

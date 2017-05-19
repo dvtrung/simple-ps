@@ -25,6 +25,7 @@ module processor(
   //   P1
   ///////////////////////////
   
+  wire [15:0] NOP = 16'b11_110_000_1110_1111;
   reg [15:0] p1_PC;
   assign ir_m_rw = 0;
   wire [15:0] p1_IR = ir_m_q;
@@ -32,6 +33,8 @@ module processor(
   wire p1_RegWrite, p1_MemtoReg, p1_RegDst, p1_ALUSrc, p1_PCSrc;
   
   reg stall = 0; // stop to increment PC
+  
+  reg flush_p1_p2 = 0;
   
   controller controller_(
     .clock(clock), .reset(reset), .exec(exec),
@@ -60,14 +63,15 @@ module processor(
   reg p2_RegWrite, p2_MemtoReg, p2_RegDst, p2_ALUSrc, p2_PCSrc;
   
   always @(posedge clock) begin
-    p2_PC <= p1_PC; p2_IR <= p1_IR;
+    p2_PC <= p1_PC;
+    p2_IR <= flush_p1_p2 ? NOP : p1_IR;
     // p2_AR, p2_BR <~ register in p5
     
-    p2_RegWrite <= p1_RegWrite;
-    p2_MemtoReg <= p1_MemtoReg;
-    p2_RegDst <= p1_RegDst;
-    p2_ALUSrc <= p1_ALUSrc;
-    p2_PCSrc <= p1_PCSrc;
+    p2_RegWrite <= flush_p1_p2 ? 0 : p1_RegWrite;
+    p2_MemtoReg <= flush_p1_p2 ? 0 : p1_MemtoReg;
+    p2_RegDst <= flush_p1_p2 ? 0 : p1_RegDst;
+    p2_ALUSrc <= flush_p1_p2 ? 0 : p1_ALUSrc;
+    p2_PCSrc <= flush_p1_p2 ? 0 : p1_PCSrc;
   end
   
   wire [15:0] p2_D = sign_ext(p2_IR[7:0]);
@@ -93,15 +97,16 @@ module processor(
   endfunction
     
   always @(posedge clock) begin
-    p3_PC <= p2_PC; p3_IR <= p2_IR;
+    p3_PC <= p2_PC;
+    p3_IR <= flush_p1_p2 ? NOP : p2_IR;
     p3_D <= p2_D;
     p3_AR <= p2_AR; p3_BR <= p2_BR;
 
-    p3_RegWrite <= p2_RegWrite;
-    p3_MemtoReg <= p2_MemtoReg;
-    p3_RegDst <= p2_RegDst;
-    p3_ALUSrc <= p2_ALUSrc;
-    p3_PCSrc <= p2_PCSrc;
+    p3_RegWrite <= flush_p1_p2 ? 0 : p2_RegWrite;
+    p3_MemtoReg <= flush_p1_p2 ? 0 : p2_MemtoReg;
+    p3_RegDst <= flush_p1_p2 ? 0 : p2_RegDst;
+    p3_ALUSrc <= flush_p1_p2 ? 0 : p2_ALUSrc;
+    p3_PCSrc <= flush_p1_p2 ? 0 : p2_PCSrc;
   end
   
   wire [15:0] alu_res;
@@ -118,17 +123,21 @@ module processor(
   always @(posedge clock or posedge reset) begin
     if (reset) begin
       p1_PC = 0;
+      jumped <= 0;
+      flush_p1_p2 <= 0;
     end else if (~stall) begin
-      if (p2_IR[15:11] == 5'b10100 /*B*/ ||
+      if ((~flush_p1_p2) & (p2_IR[15:11] == 5'b10100 /*B*/ ||
           p2_IR[15:8] == 8'b10111000 /*BE*/ & SZCV[2] ||
           p2_IR[15:8] == 8'b10111001 /*BLT*/ & (SZCV[3] ^ SZCV[0]) ||
           p2_IR[15:8] == 8'b10111010 /*BLE*/ & (SZCV[2] || (SZCV[3] ^ SZCV[0])) ||
-          p2_IR[15:8] == 8'b10111011 /*BNE*/ & (~ SZCV[2])) begin
+          p2_IR[15:8] == 8'b10111011 /*BNE*/ & (~ SZCV[2]))) begin
         p1_PC <= p2_PC + p2_D;
         jumped <= 1;
+        flush_p1_p2 <= 1;
       end else begin
         p1_PC <= p1_PC + 1;
         jumped <= 0;
+        flush_p1_p2 <= 0;
       end
     end
   end
