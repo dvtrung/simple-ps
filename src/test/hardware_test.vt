@@ -7,7 +7,9 @@
 `include "../modules/alu_shifter.v"
 `include "../modules/processor.v"
 `include "../modules/register.v"
+`include "../modules/out_counter.v"
 `include "../modules/seg7.v"
+`include "../devices/ram_inc.v"
 
 module hardware_test();
   reg clock, reset;
@@ -16,14 +18,15 @@ module hardware_test();
   wire [15:0] inp;
   wire [7:0] seg_sel, oled;
   
-  wire [7:0] led0, led1, led2, led3, led4, led5, led6, led7;
+  wire [7:0] led0, led1, led2, led3, led4, led5, led6, led7, oled1, oled2, oled_sel;
   
   hardware hardware_(
     .clock(clock), .n_reset(reset),
-    .inp(inp),
-    .seg_sel(seg_sel), .oled(oled),
+    .inpval1(inp),
+    .seg_sel(seg_sel),
     .led0(led0), .led1(led1), .led2(led2), .led3(led3), 
-    .led4(led4), .led5(led5), .led6(led6), .led7(led7)
+    .led4(led4), .led5(led5), .led6(led6), .led7(led7),
+    .oled1(oled1), .oled2(oled2), .oled_sel(oled_sel)
   );
   
   wire [15:0] outval1_0 = hardware_.out_.arr_outval1[0];

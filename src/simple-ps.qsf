@@ -52,7 +52,7 @@ set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH processor_test -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH out_counter_test -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_NAME hardware_test -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id hardware_test
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME hardware_test -section_id hardware_test
@@ -177,14 +177,6 @@ set_global_assignment -name VERILOG_FILE modules/seg7.v
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name EDA_TEST_BENCH_FILE test/hardware_test.vt -section_id hardware_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/multiplexer_test.vt -section_id multiplexer_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/alu_test.vt -section_id alu_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/register_test.vt -section_id register_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/processor_test.vt -section_id processor_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/shifter_test.vt -section_id shifter_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/ram_inc_test.vt -section_id ram_inc_test
-set_global_assignment -name EDA_TEST_BENCH_FILE test/out_test.vt -section_id out_test
 set_location_assignment PIN_A10 -to inpval1[15]
 set_location_assignment PIN_B10 -to inpval1[14]
 set_location_assignment PIN_C10 -to inpval1[13]
@@ -210,4 +202,41 @@ set_location_assignment PIN_D15 -to inpval2[3]
 set_location_assignment PIN_C15 -to inpval2[2]
 set_location_assignment PIN_B15 -to inpval2[1]
 set_location_assignment PIN_A15 -to inpval2[0]
+set_global_assignment -name VERILOG_FILE modules/out_counter.v
+set_global_assignment -name EDA_TEST_BENCH_FILE test/hardware_test.vt -section_id hardware_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/multiplexer_test.vt -section_id multiplexer_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/alu_test.vt -section_id alu_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/register_test.vt -section_id register_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/processor_test.vt -section_id processor_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/shifter_test.vt -section_id shifter_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/ram_inc_test.vt -section_id ram_inc_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/out_test.vt -section_id out_test
+set_global_assignment -name EDA_TEST_BENCH_NAME out_counter_test -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id out_counter_test
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME out_counter_test -section_id out_counter_test
+set_global_assignment -name EDA_TEST_BENCH_FILE test/out_counter_test.vt -section_id out_counter_test
+set_location_assignment PIN_B5 -to oled1[0]
+set_location_assignment PIN_A4 -to oled1[1]
+set_location_assignment PIN_B3 -to oled1[2]
+set_location_assignment PIN_B4 -to oled1[3]
+set_location_assignment PIN_A5 -to oled1[4]
+set_location_assignment PIN_A6 -to oled1[5]
+set_location_assignment PIN_B6 -to oled1[6]
+set_location_assignment PIN_A3 -to oled1[7]
+set_location_assignment PIN_D7 -to oled2[0]
+set_location_assignment PIN_A7 -to oled2[1]
+set_location_assignment PIN_D6 -to oled2[2]
+set_location_assignment PIN_B7 -to oled2[3]
+set_location_assignment PIN_C7 -to oled2[4]
+set_location_assignment PIN_E7 -to oled2[5]
+set_location_assignment PIN_F7 -to oled2[6]
+set_location_assignment PIN_C6 -to oled2[7]
+set_location_assignment PIN_E5 -to oled_sel[0]
+set_location_assignment PIN_C4 -to oled_sel[1]
+set_location_assignment PIN_C3 -to oled_sel[2]
+set_location_assignment PIN_E6 -to oled_sel[3]
+set_location_assignment PIN_G7 -to oled_sel[4]
+set_location_assignment PIN_G8 -to oled_sel[5]
+set_location_assignment PIN_G9 -to oled_sel[6]
+set_location_assignment PIN_H10 -to oled_sel[7]
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -1,0 +1,29 @@
+`include "./helper/header.vt"
+`include "../modules/out_counter.v"
+`include "../modules/seg7.v"
+
+module out_counter_test();
+  reg clock, reset, halting;
+
+  wire [7:0] oled1, oled2, oled_sel;
+  
+  out_counter out_counter_(
+    .clock(clock), .reset(reset), .halting(halting),
+    .led1(oled1), .led2(oled2), .led_sel(oled_sel));
+
+  initial begin  
+    clock <= 0; reset <= 1; halting <= 0;
+    # 100 reset <= 0;
+    # 100 halting <= 1;
+    # 100 reset <= 1; halting <= 0;
+    # 100 reset <= 0;
+    
+    # 100
+    $display("TEST FINSHED in %m");
+    $finish();
+  end
+  
+  always begin
+    #5 clock <= ~clock;
+  end
+endmodule
