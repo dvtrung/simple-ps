@@ -8,7 +8,7 @@ li 1 32
 li 2 32
 
 -- pointer w
-li 3 64
+li 3 0
 
 -- block_size
 li 4 1
@@ -23,13 +23,6 @@ li 7 0
 -- junk
 
 :start
-
--- s = l = r = 32; w = 64
-
-li 0 32
-li 1 32
-li 2 32
-li 3 64
 
 -- r += size
 add 2 4
@@ -111,10 +104,17 @@ nop
 -- s = r
 mov 0 2
 
--- s == 64; :next
+-- s == 64; :next_back
 li 7 64
 cmp 0 7
-be :next
+be :next_back
+nop
+nop
+
+-- s == 32; :next_foward
+li 7 32
+cmp 0 7
+be :next_foward
 nop
 nop
 
@@ -125,14 +125,56 @@ b 0 :compare
 nop
 nop
 
-:next
+b 0 :start
+
+:next_back
 
 -- size <<= 1
 sll 4 1
 
--- s = 32, w = 64
+-- s = l = r = 0; w = 32
+
+li 0 0
+li 1 0
+li 2 0
+li 3 32
+
+-- size == 1 << 5; :final
+li 7 1
+sll 7 5
+cmp 4 7
+be :final
+nop
+nop
+
+-- :start
+b 0 :start
+nop
+nop
+
+:next_foward
+
+-- size <<= 1
+sll 4 1
+
+-- s = l = r = 32; w = 0
+
 li 0 32
-li 3 64
+li 1 32
+li 2 32
+li 3 0
+
+-- :start
+b 0 :start
+nop
+nop
+
+:final
+
+-- s = 32, w = 0
+
+li 0 32
+li 3 0
 
 :moving
 
@@ -149,20 +191,13 @@ li 7 1
 add 0 7
 add 3 7
 
--- s != 64; :moving
+-- s == 64; :moving
 li 7 64
 cmp 0 7
 bne :moving
 nop
 nop
 
--- size != 1 << 5; :start
-li 7 1
-sll 7 5
-cmp 4 7
-bne :start
-nop
-nop
 
 b 0 :end
 nop
