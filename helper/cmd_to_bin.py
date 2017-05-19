@@ -57,6 +57,8 @@ lines = [(i, line.strip()) for i, line in enumerate(sys.stdin)]
 
 count = 0
 for i, line in lines:
+  if line.startswith("--"):
+    continue
   if line.startswith(":"):
     assert line not in labels, "duplicate labels"
     labels[line] = count
