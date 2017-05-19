@@ -1,26 +1,27 @@
--- pointer s
-li 0 32
+-- pointer s = 1024
+li 0 1
+sll 0 10
 
--- pointer l
-li 1 32
+-- pointer l = 1024
+mov 1 0
 
--- pointer r
-li 2 32
+-- pointer r = 1024
+mov 2 0
 
--- pointer w
+-- pointer w = 0
 li 3 0
 
--- block_size
+-- block_size = 1
 li 4 1
 
+-- value l = 0
 li 5 0
--- value l
 
+-- value r = 0
 li 6 0
--- value r
 
-li 7 0
 -- junk
+li 7 0
 
 :start
 
@@ -61,6 +62,19 @@ add 7 4
 cmp 2 7
 be :compare_end
 
+-- through from l_max
+:use_r
+
+-- *r = *l
+st 6 0 3
+
+-- w++, r++
+li 7 1
+add 3 7
+add 2 7
+
+b 0 :compare
+
 :use_l
 
 -- *w = *l
@@ -74,30 +88,20 @@ add 1 7
 -- :compare
 b 0 :compare
 
-:use_r
-
--- *r = *l
-st 6 0 3
-
--- w++, r++
-li 7 1
-add 3 7
-add 2 7
-
-b 0 :compare
-
 :compare_end
 
 -- s = r
 mov 0 2
 
--- s == 64; :next_back
-li 7 64
+-- s == 2048; :next_back
+li 7 1
+sll 7 11
 cmp 0 7
 be :next_back
 
--- s == 32; :next_foward
-li 7 32
+-- s == 1024; :next_foward
+li 7 1
+sll 7 10
 cmp 0 7
 be :next_foward
 
@@ -111,18 +115,13 @@ b 0 :compare
 -- size <<= 1
 sll 4 1
 
--- s = l = r = 0; w = 32
+-- s = l = r = 0; w = 1024
 
 li 0 0
 li 1 0
 li 2 0
-li 3 32
-
--- size == 1 << 5; :final
-li 7 1
-sll 7 5
-cmp 4 7
-be :final
+li 3 1
+sll 3 10
 
 -- :start
 b 0 :start
@@ -132,47 +131,24 @@ b 0 :start
 -- size <<= 1
 sll 4 1
 
--- s = l = r = 32; w = 0
+-- size == 1 << 10; :final
+li 7 1
+sll 7 10
+cmp 4 7
+be :final
 
-li 0 32
-li 1 32
-li 2 32
+-- s = l = r = 1024; w = 0
+
+li 0 1
+sll 0 10
+mov 1 0
+mov 2 0
 li 3 0
 
 -- :start
 b 0 :start
 
 :final
-
--- s = 32, w = 0
-
-li 0 32
-li 3 0
-
-:moving
-
--- *s = *w
-ld 7 0 3
-nop
-nop
-st 7 0 0
-
-out 0 7 0
-
--- s++; w++
-li 7 1
-add 0 7
-add 3 7
-
--- s == 64; :moving
-li 7 64
-cmp 0 7
-bne :moving
-
--- :end
-b 0 :end
-
-:end
 
 li 7 222
 sll 7 8
@@ -186,5 +162,7 @@ li 5 175
 sll 5 8
 srl 5 8
 add 5 7
+nop
+nop
 out 6 7 6
 hlt
