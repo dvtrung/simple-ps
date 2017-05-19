@@ -9,24 +9,24 @@ li 7 7
 li 1 7
 li 2 5
 add 2 1
-li 2 5
+li 2 6
 sub 2 1
-li 2 5
+li 2 7
 and 2 1
-li 2 5
+li 2 8
 or 2 1
-li 2 5
+li 2 9
 xor 2 1
-li 2 5
+li 2 10
 cmp 2 1
-li 2 5
+li 2 11
 mov 2 1
 
-li 2 5
-sll 2 5
-slr 2 5
-srl 2 5
-sra 2 5
+li 2 -12
+sll 2 4
+slr 2 4
+sra 2 4
+srl 2 4
 
 li 3 42
 st 3 60 0
