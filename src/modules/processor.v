@@ -23,13 +23,23 @@ module processor(
   output reg halting
   );
   
+  localparam [15:0] NOP = 16'b11_110_000_1110_1111;
+  localparam [7:0] OP_CODE_BE = 8'b10111000;
+  localparam [7:0] OP_CODE_BLT = 8'b10111001;
+  localparam [7:0] OP_CODE_BLE = 8'b10111010;
+  localparam [7:0] OP_CODE_BNE = 8'b10111011;
+  localparam [4:0] OP_CODE_B = 5'b10100;
+  localparam [4:0] OP_CODE_BAL = 5'b10110;
+  localparam [4:0] OP_CODE_BR = 5'b10101;
+  
+  
   reg stall = 0;
+  reg [15:0] bal_ra;
     
   ///////////////////////////
   //   P1
   ///////////////////////////
   
-  wire [15:0] NOP = 16'b11_110_000_1110_1111;
   reg [15:0] p1_PC;
   assign ir_m_rw = 0;
   wire [15:0] p1_IR = ir_m_q;
@@ -145,27 +155,32 @@ module processor(
   );
   
   wire [15:0] p3_DR = (p3_IR[15:11] == 5'b10000 /*LI*/) ? p3_D : alu_res;
-  reg jumped;
   always @(posedge clock or posedge reset) begin
     if (reset) begin
       p1_PC = 0;
-      jumped <= 0;
       flush_p1_p2 <= 0;
       halting <= 0;
     end else if (~stall_ & ~halting) begin
-      if ((~flush_p1_p2) & (p2_IR[15:11] == 5'b10100 /*B*/ ||
-          p2_IR[15:8] == 8'b10111000 /*BE*/ & SZCV[2] ||
-          p2_IR[15:8] == 8'b10111001 /*BLT*/ & (SZCV[3] ^ SZCV[0]) ||
-          p2_IR[15:8] == 8'b10111010 /*BLE*/ & (SZCV[2] || (SZCV[3] ^ SZCV[0])) ||
-          p2_IR[15:8] == 8'b10111011 /*BNE*/ & (~ SZCV[2]))) begin
+      if ((~flush_p1_p2) & (
+          p2_IR[15:11] == OP_CODE_B ||
+          p2_IR[15:8] == OP_CODE_BE   & SZCV[2] ||
+          p2_IR[15:8] == OP_CODE_BLT  & (SZCV[3] ^ SZCV[0]) ||
+          p2_IR[15:8] == OP_CODE_BLE  & (SZCV[2] || (SZCV[3] ^ SZCV[0])) ||
+          p2_IR[15:8] == OP_CODE_BNE  & (~ SZCV[2]))) 
+      begin
         p1_PC <= p2_PC + p2_D;
-        jumped <= 1;
         flush_p1_p2 <= 1;
-      end else if(p2_Halt) begin
+      end else if (p2_IR[15:11] == OP_CODE_BAL) begin
+        flush_p1_p2 <= 1;
+        p1_PC <= p2_PC + p2_D;
+        bal_ra <= p2_PC;
+      end else if (p2_IR[15:11] == OP_CODE_BR) begin
+        flush_p1_p2 <= 1;
+        p1_PC <= bal_ra;
+      end else if (p2_Halt) begin
         halting <= 1;
       end else begin
         p1_PC <= p1_PC + 1;
-        jumped <= 0;
         flush_p1_p2 <= 0;
       end
     end
