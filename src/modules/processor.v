@@ -18,7 +18,9 @@ module processor(
   output [15:0] outval1,     // output value
   output [15:0] outval2,
   output [2:0] outsel,        // if output instruction
-  output outdisplay
+  output outdisplay,
+  
+  output reg halting
   );
     
   ///////////////////////////
@@ -30,7 +32,7 @@ module processor(
   assign ir_m_rw = 0;
   wire [15:0] p1_IR = ir_m_q;
   
-  wire p1_RegWrite, p1_MemtoReg, p1_RegDst, p1_ALUSrc, p1_PCSrc;
+  wire p1_RegWrite, p1_MemtoReg, p1_RegDst, p1_ALUSrc, p1_PCSrc, p1_Halt;
   
   reg stall = 0; // stop to increment PC
   
@@ -43,7 +45,8 @@ module processor(
     .MemtoReg(p1_MemtoReg),
     .RegDst(p1_RegDst),
     .ALUSrc(p1_ALUSrc),
-    .PCSrc(p1_PCSrc)
+    .PCSrc(p1_PCSrc),
+    .Halt(p1_Halt)
   );
   
   always @(posedge clock) begin
@@ -60,7 +63,7 @@ module processor(
   reg [15:0] p2_PC;
   wire [15:0] p2_AR, p2_BR;
   
-  reg p2_RegWrite, p2_MemtoReg, p2_RegDst, p2_ALUSrc, p2_PCSrc;
+  reg p2_RegWrite, p2_MemtoReg, p2_RegDst, p2_ALUSrc, p2_PCSrc, p2_Halt;
   
   always @(posedge clock) begin
     p2_PC <= p1_PC;
@@ -72,6 +75,7 @@ module processor(
     p2_RegDst <= flush_p1_p2 ? 0 : p1_RegDst;
     p2_ALUSrc <= flush_p1_p2 ? 0 : p1_ALUSrc;
     p2_PCSrc <= flush_p1_p2 ? 0 : p1_PCSrc;
+    p2_Halt <= flush_p1_p2 ? 0 : p1_Halt;
   end
   
   wire [15:0] p2_D = sign_ext(p2_IR[7:0]);
@@ -125,7 +129,8 @@ module processor(
       p1_PC = 0;
       jumped <= 0;
       flush_p1_p2 <= 0;
-    end else if (~stall) begin
+      halting <= 0;
+    end else if (~stall & ~halting) begin
       if ((~flush_p1_p2) & (p2_IR[15:11] == 5'b10100 /*B*/ ||
           p2_IR[15:8] == 8'b10111000 /*BE*/ & SZCV[2] ||
           p2_IR[15:8] == 8'b10111001 /*BLT*/ & (SZCV[3] ^ SZCV[0]) ||
@@ -134,6 +139,8 @@ module processor(
         p1_PC <= p2_PC + p2_D;
         jumped <= 1;
         flush_p1_p2 <= 1;
+      end else if(p2_Halt) begin
+        halting <= 1;
       end else begin
         p1_PC <= p1_PC + 1;
         jumped <= 0;

@@ -2,7 +2,7 @@ module controller(
   input clock, reset, exec,
   input [15:0] instr,
   
-  output RegWrite, MemtoReg, RegDst, ALUSrc, PCSrc
+  output RegWrite, MemtoReg, RegDst, ALUSrc, PCSrc, Halt
   );
   
   wire [1:0] op1 = instr[15:14];
@@ -26,4 +26,5 @@ module controller(
   assign PCSrc = (op1 == 2'b10 && op2 == 3'b100)
               || (op1 == 2'b10 && instr[13:11] == 3'b111);
 
+  assign Halt = (op1 == 2'b11 && op3 == 4'b1111); /*HLT*/
 endmodule

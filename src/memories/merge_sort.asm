@@ -169,16 +169,22 @@ li 7 64
 cmp 0 7
 bne :moving
 
-
 -- :end
 b 0 :end
 
 :end
 
-li 7 170
-out 7 7 7
-
-b 0 :end
-
-nop
-nop
+li 7 222
+sll 7 8
+li 6 173
+sll 6 8
+srl 6 8
+add 6 7
+li 7 190
+sll 7 8
+li 5 175
+sll 5 8
+srl 5 8
+add 5 7
+out 6 7 6
+hlt
