@@ -13,7 +13,7 @@ module processor_test();
   wire [11:0] ir_m_addr;
   wire ir_m_wren;
   
-  ram_inc #("../../memories/branch.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/test_bal.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~clock),
     .q(ir_m_q)
@@ -63,9 +63,7 @@ module processor_test();
   wire [15:0] p3_PC = processor_.p3_PC;
   wire [15:0] p4_PC = processor_.p4_PC;
   
-  wire stall = processor_.stall;
-  wire stall_ = processor_.stall_;
-  
+  wire flush_p1_p2 = processor_.flush_p1_p2;
   //wire p5_RegWrite = processor_.p5_RegWrite;
   //wire [2:0] write_addr = processor_.register_.write_addr;
   //wire [15:0] write_data = processor_.register_.write_data;
@@ -74,22 +72,6 @@ module processor_test();
   
   //wire [15:0] p5_DR = processor_.p5_DR;
   //wire [15:0] p4_DR = processor_.p4_DR;
-  
-  wire [3:0] p2_r1 = processor_.p2_r1;
-  wire [3:0] p2_r2 = processor_.p2_r2;
-  
-  wire [15:0] p2_AR = processor_.p2_AR;
-  wire [15:0] p2_BR = processor_.p2_BR;
-  
-  wire [15:0] p3_AR = processor_.p3_AR;
-  wire [15:0] p3_BR = processor_.p3_BR;
-  
-  wire [15:0] p3_DR = processor_.p3_DR;
-  wire [15:0] p4_DR = processor_.p4_DR;
-  
-  wire p1_RegWrite = processor_.p1_RegWrite;
-  wire p2_RegWrite = processor_.p2_RegWrite;
-  wire p5_RegWrite = processor_.p5_RegWrite;
   
   wire [15:0] alu_res = processor_.alu_res;
   
