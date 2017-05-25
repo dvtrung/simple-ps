@@ -76,11 +76,12 @@ module processor(
   wire [2:0] p2_r1 = p2_IR[13:11];
   wire [2:0] p2_r2 = p2_IR[10:8];
   reg [15:0] p2_PC;
-  wire [15:0] p2_AR, p2_BR;
+  wire signed [15:0] p2_AR, p2_BR;
   
   reg p2_RegWrite, p2_MemtoReg, p2_RegDst, p2_ALUSrc, p2_PCSrc, p2_Halt;
   
   wire stall_ = ((p2_IR[15:14] == 2'b00 && (p2_r1 != 3'b0 || p2_r2 != 3'b0) /* LD (~MemRead) */) && 
+      (p1_IR[15:14] != 2'b00) /* previous instruction: not LD */ &&
       ((p1_r1 == p2_r2) || (p1_r2 == p2_r2)));
   
   wire flush_p2 = stall_ | flush_p1_p2;
@@ -100,7 +101,7 @@ module processor(
     end
   end
   
-  wire [15:0] p2_D = sign_ext(p2_IR[7:0]);
+  wire signed [15:0] p2_D = sign_ext(p2_IR[7:0]);
   
   ///////////////////////////
   //   P3
@@ -109,11 +110,11 @@ module processor(
   reg [15:0] p3_PC;
   reg [15:0] p3_IR;
   wire [1:0] p3_op1 = p3_IR[15:14];
-  wire [3:0] p3_op3 = p3_IR[7:4];
+  wire [3:0] p3_op3 = (p3_IR[15:11] == 5'b10001/* ADDI */) ? 4'b0000 : p3_IR[7:4];
   wire [2:0] p3_r1 = p3_IR[13:11];
   wire [2:0] p3_r2 = p3_IR[10:8];
-  reg [15:0] p3_AR, p3_BR;
-  reg [15:0] p3_D;
+  reg signed [15:0] p3_AR, p3_BR;
+  reg signed [15:0] p3_D;
   
   reg p3_RegWrite, p3_MemtoReg, p3_RegDst, p3_ALUSrc, p3_PCSrc;
 
@@ -146,7 +147,7 @@ module processor(
       p3_PCSrc <= flush_p1_p2 ? 0 : p2_PCSrc;
   end
   
-  wire [15:0] alu_res;
+  wire signed [15:0] alu_res;
   wire [3:0] SZCV;
   alu_shifter alu_shifter_(
     .a(p3_ALUSrc ? p3_D : p3_AR),
@@ -196,10 +197,10 @@ module processor(
   ///////////////////////////
   
   reg [15:0] p4_PC, p4_IR;
-  reg [15:0] p4_D;
+  reg signed [15:0] p4_D;
   reg [15:0] p4_DR;
   reg [15:0] p4_MR;
-  reg [15:0] p4_AR, p4_BR;
+  reg signed [15:0] p4_AR, p4_BR;
   wire [1:0] p4_op1 = p4_IR[15:14]; 
   
   reg p4_RegWrite, p4_MemtoReg, p4_RegDst, p4_PCSrc;
@@ -225,7 +226,7 @@ module processor(
     p4_RegDst <= p3_RegDst;
     p4_PCSrc <= p3_PCSrc;
 
-      // Store
+    // Store
     main_m_addr <= p3_m_addr;
     if (p3_IR[15:14] == 2'b01) begin /* ST */
       main_m_data <= p3_BR;

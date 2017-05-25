@@ -13,7 +13,7 @@ module processor_test();
   wire [11:0] ir_m_addr;
   wire ir_m_wren;
   
-  ram_inc #("../../memories/test_bal.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/quick_sort.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~clock),
     .q(ir_m_q)
@@ -23,7 +23,7 @@ module processor_test();
   wire [11:0] main_m_addr;
   wire main_m_wren;
   
-  ram_inc #("../../memories/memory_mini_sort.mif") main_ram_inc_ (
+  ram_inc #("../../memories/random.mif") main_ram_inc_ (
     .data(main_m_data), .wren(main_m_wren), .address(main_m_addr),
     .clock(~clock),
     .q(main_m_q)
@@ -43,14 +43,14 @@ module processor_test();
     .inpval1(inpval1), .inpval2(inpval2),
     .outval1(outval1), .outval2(outval2), .outsel(outsel));
 
-  wire [15:0] r0 = processor_.register_.r[0];
-  wire [15:0] r1 = processor_.register_.r[1];
-  wire [15:0] r2 = processor_.register_.r[2];
-  wire [15:0] r3 = processor_.register_.r[3];
-  wire [15:0] r4 = processor_.register_.r[4];
-  wire [15:0] r5 = processor_.register_.r[5];
-  wire [15:0] r6 = processor_.register_.r[6];
-  wire [15:0] r7 = processor_.register_.r[7];
+  wire signed [15:0] r0 = processor_.register_.r[0];
+  wire signed [15:0] r1 = processor_.register_.r[1];
+  wire signed [15:0] r2 = processor_.register_.r[2];
+  wire signed [15:0] r3 = processor_.register_.r[3];
+  wire signed [15:0] r4 = processor_.register_.r[4];
+  wire signed [15:0] r5 = processor_.register_.r[5];
+  wire signed [15:0] r6 = processor_.register_.r[6];
+  wire signed [15:0] r7 = processor_.register_.r[7];
   
   wire [15:0] p1_IR = processor_.p1_IR;
   wire [15:0] p2_IR = processor_.p2_IR;
@@ -58,22 +58,23 @@ module processor_test();
   wire [15:0] p4_IR = processor_.p4_IR;
   wire [15:0] p5_IR = processor_.p5_IR;
   
-  wire [15:0] p1_PC = processor_.p1_PC;
-  wire [15:0] p2_PC = processor_.p2_PC;
-  wire [15:0] p3_PC = processor_.p3_PC;
-  wire [15:0] p4_PC = processor_.p4_PC;
+  wire signed [15:0] p1_PC = processor_.p1_PC;
+  wire signed [15:0] p2_PC = processor_.p2_PC;
+  wire signed [15:0] p3_PC = processor_.p3_PC;
+  wire signed [15:0] p4_PC = processor_.p4_PC;
   
   wire flush_p1_p2 = processor_.flush_p1_p2;
-  //wire p5_RegWrite = processor_.p5_RegWrite;
-  //wire [2:0] write_addr = processor_.register_.write_addr;
-  //wire [15:0] write_data = processor_.register_.write_data;
+  wire p5_RegWrite = processor_.p5_RegWrite;
+  wire [2:0] write_addr = processor_.register_.write_addr;
+  wire [15:0] write_data = processor_.register_.write_data;
   
   //wire [15:0] p5_MDR = processor_.p5_MDR;
   
-  //wire [15:0] p5_DR = processor_.p5_DR;
-  //wire [15:0] p4_DR = processor_.p4_DR;
+  //wire signed [15:0] p3_D = processor_.p3_D;
+  //wire signed [15:0] a = processor_.alu_shifter_.a;
+  //wire signed [15:0] b = processor_.alu_shifter_.b;
   
-  wire [15:0] alu_res = processor_.alu_res;
+  wire signed [15:0] alu_res = processor_.alu_shifter_.res_;
   
   initial begin
     clock <= 0;
@@ -82,7 +83,7 @@ module processor_test();
     reset <= 0;
     inpval1 <= 16'b0000000001011010;
     inpval2 <= 16'b0000000000001010;
-    # 200000
+    # 20000000
     $finish();
   end
 

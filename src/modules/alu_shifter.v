@@ -2,23 +2,24 @@ module alu_shifter(
   input signed [15:0] a, b, 
   input [3:0] shift_d,
   input [3:0] op,
-  output [15:0] res,
+  output signed [15:0] res,
   output [3:0] szcv
   );
   
   reg [15:0] reg_d1, reg_d2;
-  reg [16:0] res_, res__, reg_d; 
+  reg signed [15:0] res_, res__; 
+  reg [16:0] reg_d; 
   reg [3:0] szcv_;
   
   always @(*) begin
     case (op)
       4'b0000: begin          // ADD
         res_ <= b + a;
-        szcv_[1] <= res_[16]; // C: if carry exists
+        //szcv_[1] <= res_[16]; // C: if carry exists
       end
       4'b0001: begin          // SUB
         res_ <= b - a;
-        szcv_[1] <= res_[16]; // C: if carry exists
+        //szcv_[1] <= res_[16]; // C: if carry exists
       end
       4'b0010: res_ <= a & b;  // AND
       4'b0011: res_ <= a | b;  // OR
