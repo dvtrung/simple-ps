@@ -117,8 +117,8 @@ for i, line in lines:
       assert len(a) == 2, "unmatchd args"
       res = "10" + "111" + CODE5[a[0]] + label_to_bin(a[1], 8, count)
 
-    assert res is not None, "may not be a inst!"
-    assert len(res) == 16, res + "is a iligal inst!"
+    assert res is not None, "may not be an inst!"
+    assert len(res) == 16, res + "is an ilegal inst!"
 
     print("\t" + str(count) + ":\t" + res + "; -- " + line)
   except Exception as e:

@@ -34,7 +34,8 @@ module processor(
   
   
   reg stall = 0;
-  reg [15:0] bal_ra;
+  reg [15:0] bal_stack[0:15];
+  reg bal_pos = 0;
     
   ///////////////////////////
   //   P1
@@ -173,10 +174,12 @@ module processor(
       end else if (p2_IR[15:11] == OP_CODE_BAL) begin
         flush_p1_p2 <= 1;
         p1_PC <= p2_PC + p2_D;
-        bal_ra <= p2_PC;
+        bal_stack[bal_pos] <= p2_PC;
+        bal_pos <= bal_pos + 1;
       end else if (p2_IR[15:11] == OP_CODE_BR) begin
         flush_p1_p2 <= 1;
-        p1_PC <= bal_ra;
+        p1_PC <= bal_stack[bal_pos - 1];
+        bal_pos <= bal_pos - 1;
       end else if (p2_Halt) begin
         halting <= 1;
       end else begin
