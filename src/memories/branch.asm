@@ -99,13 +99,13 @@ hlt
 
 :nexte
 
-li 0 0
-addi 0 16
-addi 0 -16
-
 li 1 0
-li 2 32
+li 0 16
+
+:backi
+
 addi 0 -1
-bne :nexte
+cmp 0 1
+bne :backi
 hlt
 
