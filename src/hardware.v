@@ -9,18 +9,18 @@ module hardware (
   output [7:0] oled1, oled2, oled_sel
   );
   
-  //wire f_clock; // 40MHz(0) -> 60MHz
-  //atlpll atlpll_(
-  //  .areset(0), .inclk0(clock),
-  //  .c0(f_clock));
+  wire f_clock; // 40MHz(0) -> 60MHz
+  atlpll atlpll_(.inclk0(clock), .c0(f_clock));
   
-  wire use_clock = clock;
+  reg reset;
+  
+  wire use_clock = f_clock;
   
   wire [15:0] ir_m_data, ir_m_q;
   wire [11:0] ir_m_addr;
   wire ir_m_wren;
   
-  ram_inc #("../../memories/branch.mif") ir_ram_inc_ (
+  ram_ir ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~use_clock),
     .q(ir_m_q)
@@ -30,7 +30,7 @@ module hardware (
   wire [11:0] main_m_addr;
   wire main_m_wren;
   
-  ram_inc #("../../memories/quick_sort.mif") main_ram_inc_ (
+  ram_main main_ram_inc_ (
     .data(main_m_data), .wren(main_m_wren), .address(main_m_addr),
     .clock(~use_clock),
     .q(main_m_q)
@@ -45,7 +45,7 @@ module hardware (
   wire halting;
   
   processor processor_ (
-    .clock(use_clock), .reset(~n_reset), .exec(exec),
+    .clock(use_clock), .reset(reset), .exec(exec),
     .ir_m_q(ir_m_q), .ir_m_data(ir_m_data),
     .ir_m_rw(ir_m_wren), .ir_m_addr(ir_m_addr),
     .main_m_q(main_m_q), .main_m_data(main_m_data),
@@ -54,7 +54,7 @@ module hardware (
     .outval1(outval1), .outval2(outval2), .outsel(outsel), .outdisplay(outdisplay),
     .halting(halting));
   
-  out out_ (.clock(use_clock), .reset(~n_reset),
+  out out_ (.clock(use_clock), .reset(reset),
             .outval1(outval1), .outval2(outval2), .outsel(outsel), .outdisplay(outdisplay),
             .led0(led0), .led1(led1),
             .led2(led2), .led3(led3),
@@ -64,6 +64,17 @@ module hardware (
             
   
   out_counter out_counter_(
-    .clock(use_clock), .reset(~n_reset), .halting(halting),
+    .clock(use_clock), .reset(reset), .halting(halting),
     .led1(oled1), .led2(oled2), .led_sel(oled_sel));
+  
+  reg [3:0] pushing;
+  always @(posedge clock) begin
+    if (~n_reset) begin
+      reset <= pushing == 4'd0;
+      pushing <= 4'd14;
+    end else begin
+      reset <= 1'd0;
+      pushing <= (pushing > 0) ? pushing - 4'd1 : 4'd0;
+    end
+  end
 endmodule
