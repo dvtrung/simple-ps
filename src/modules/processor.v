@@ -107,7 +107,7 @@ module processor(
   reg [15:0] p3_AR, p3_BR;
   reg [15:0] p3_D;
   
-  reg p3_RegWrite, p3_MemtoReg, p3_RegDst, p3_ALUSrc, p3_PCSrc;
+  reg p3_RegWrite, p3_MemtoReg, p3_RegDst, p3_ALUSrc, p3_PCSrc, p3_Halt;
 
   function [15:0] sign_ext;
     input [7:0] in;
@@ -136,6 +136,7 @@ module processor(
       p3_RegDst   <= flush_p1_p2 ? 1'd0 : p2_RegDst;
       p3_ALUSrc   <= flush_p1_p2 ? 1'd0 : p2_ALUSrc;
       p3_PCSrc    <= flush_p1_p2 ? 1'd0 : p2_PCSrc;
+      p3_Halt     <= flush_p1_p2 ? 1'd0 : p2_Halt;
   end
   
   wire [15:0] alu_res;
@@ -162,10 +163,10 @@ module processor(
     end else if (~stall_ & ~halting) begin
       if ((~flush_p1_p2) & (
           ( p2_IR[15:11] == OP_CODE_B ) ||
-          ( p2_IR[15:8] == OP_CODE_BE  & szcv_be  ) ||
-          ( p2_IR[15:8] == OP_CODE_BLT & szcv_blt ) ||
-          ( p2_IR[15:8] == OP_CODE_BLE & szcv_ble ) ||
-          ( p2_IR[15:8] == OP_CODE_BNE & szcv_bne ) ) )
+          ( (p2_IR[15:8] == OP_CODE_BE ) & szcv_be  ) ||
+          ( (p2_IR[15:8] == OP_CODE_BLT) & szcv_blt ) ||
+          ( (p2_IR[15:8] == OP_CODE_BLE) & szcv_ble ) ||
+          ( (p2_IR[15:8] == OP_CODE_BNE) & szcv_bne ) ) )
       begin
         p1_PC <= p2_PC + p2_D;
         flush_p1_p2 <= 1;
@@ -176,7 +177,7 @@ module processor(
       end else if (p2_IR[15:11] == OP_CODE_BR) begin
         flush_p1_p2 <= 1;
         p1_PC <= bal_ra;
-      end else if (p2_Halt) begin
+      end else if (p3_Halt) begin
         halting <= 1;
       end else begin
         p1_PC <= p1_PC + 1;

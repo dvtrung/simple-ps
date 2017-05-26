@@ -63,7 +63,7 @@ module out (
         arr_outval2[outsel] <= outval2;
         outdisplay_flag2[outsel] <= 1;
       end
-      outsel2 <= outsel2 + 1;
+      outsel2 <= outsel2 + 16'd1;
       
     end
   end

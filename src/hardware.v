@@ -20,7 +20,7 @@ module hardware (
   wire [11:0] ir_m_addr;
   wire ir_m_wren;
   
-  ram_inc #("../../memories/merge_sort.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/branch.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~use_clock),
     .q(ir_m_q)
