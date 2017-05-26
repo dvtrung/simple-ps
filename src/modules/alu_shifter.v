@@ -57,7 +57,7 @@ module alu_shifter(
   end
   endfunction
   
-  assign szcv[0] = alu_res(op, a, b, res);
+  assign szcv[0] = alu_v(op, a, b, res);
   
   function [1:0] alu_sz;
     input [3:0] op;
