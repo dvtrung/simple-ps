@@ -41,7 +41,7 @@ module alu_shifter(
     
   assign res = alu_res_[16:0];
   
-  function [3:0] alu_v;
+  function alu_v;
     input [3:0] op;
     input signed [15:0] a, b, res, ba;
   begin
