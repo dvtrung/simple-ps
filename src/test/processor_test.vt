@@ -19,11 +19,11 @@ module processor_test();
     .q(ir_m_q)
   );
   
-  wire [15:0] main_m_data, main_m_q;
+  wire signed [15:0] main_m_data, main_m_q;
   wire [11:0] main_m_addr;
   wire main_m_wren;
   
-  ram_inc #("../../memories/random.mif") main_ram_inc_ (
+  ram_inc #("../../memories/random2.mif") main_ram_inc_ (
     .data(main_m_data), .wren(main_m_wren), .address(main_m_addr),
     .clock(~clock),
     .q(main_m_q)
@@ -68,6 +68,8 @@ module processor_test();
   wire [2:0] write_addr = processor_.register_.write_addr;
   wire [15:0] write_data = processor_.register_.write_data;
   
+  wire [3:0] SZCV = processor_.SZCV;
+  
   //wire [15:0] p5_MDR = processor_.p5_MDR;
   
   //wire signed [15:0] p3_D = processor_.p3_D;
@@ -82,7 +84,7 @@ module processor_test();
     reset <= 0;
     inpval1 <= 16'b0000000001011010;
     inpval2 <= 16'b0000000000001010;
-    # 20000000
+    # 2000000
     $finish();
   end
 

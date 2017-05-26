@@ -10,7 +10,7 @@ module processor(
   output ir_m_rw,
   output [11:0] ir_m_addr,
   
-  input  [15:0] main_m_q,
+  input signed [15:0] main_m_q,
   output reg [15:0] main_m_data,
   output reg main_m_rw,
   output reg [11:0] main_m_addr,
@@ -258,7 +258,7 @@ module processor(
   ///////////////////////////
   
   reg [15:0] p5_DR;
-  wire [15:0] p5_MDR = main_m_q;
+  wire signed [15:0] p5_MDR = main_m_q;
   reg [15:0] p5_IR;
   
   reg p5_RegWrite, p5_MemtoReg, p5_RegDst, p5_PCSrc;
