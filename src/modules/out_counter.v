@@ -52,7 +52,7 @@ module out_counter(
       show_c <= 0;
     end else begin
       disp_led1 <= 1;
-      show_c <= show_c + 1;
+      show_c <= show_c + 2'd1;
       if (~halting) begin
         counter <= counter + 1;
       end

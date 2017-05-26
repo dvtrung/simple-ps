@@ -1,5 +1,4 @@
 module controller(
-  input clock, reset, exec,
   input [15:0] instr,
   
   output RegWrite, MemtoReg, RegDst, ALUSrc, PCSrc, Halt

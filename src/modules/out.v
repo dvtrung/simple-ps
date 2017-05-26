@@ -36,8 +36,6 @@ module out (
   
   reg [2:0] outsel2;
   
-  reg[2:0] refresh = 3'b000;
-  
   integer i;
   
   genvar index;
@@ -58,7 +56,6 @@ module out (
       outdisplay_flag2[2] <= 0; outdisplay_flag2[3] <= 0;
       outdisplay_flag2[4] <= 0; outdisplay_flag2[5] <= 0;
       outdisplay_flag2[6] <= 0; outdisplay_flag2[7] <= 0;
-      refresh <= 3'b111;
     end else begin
       if (outdisplay) begin
         arr_outval1[outsel] <= outval1;
@@ -66,12 +63,8 @@ module out (
         arr_outval2[outsel] <= outval2;
         outdisplay_flag2[outsel] <= 1;
       end
-      outsel2 <= outsel2 + 1;
+      outsel2 <= outsel2 + 16'd1;
       
-      //if (refresh != 3'b0) begin
-        //outsel2 <= refresh;
-        //refresh <= refresh - 1;
-      //end
     end
   end
   
