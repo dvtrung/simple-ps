@@ -14,7 +14,7 @@ module hardware (
   wire ir_m_wren;
   
   reg s_clock;
-  ram_inc #("../../memories/hlt_test.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/memory_mini_sort.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~clock),
     .q(ir_m_q)
@@ -24,7 +24,7 @@ module hardware (
   wire [11:0] main_m_addr;
   wire main_m_wren;
   
-  ram_inc #("../../memories/test_stall.mif") main_ram_inc_ (
+  ram_inc #("../../memories/quick_sort.mif") main_ram_inc_ (
     .data(main_m_data), .wren(main_m_wren), .address(main_m_addr),
     .clock(~clock),
     .q(main_m_q)
