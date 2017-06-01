@@ -14,7 +14,7 @@ module hardware (
   
   reg reset;
   
-  wire use_clock = f_clock;
+  wire use_clock = clock;
   
   wire [15:0] ir_m_data, ir_m_q;
   wire [11:0] ir_m_addr;
@@ -67,14 +67,14 @@ module hardware (
     .clock(use_clock), .reset(reset), .halting(halting),
     .led1(oled1), .led2(oled2), .led_sel(oled_sel));
   
-  reg [3:0] pushing;
-  always @(posedge clock) begin
+  reg [15:0] pushing;
+  always @(posedge use_clock) begin
     if (~n_reset) begin
-      reset <= pushing == 4'd0;
-      pushing <= 4'd14;
+      reset <= pushing == 16'd0;
+      pushing <= 16'hfff;
     end else begin
       reset <= 1'd0;
-      pushing <= (pushing > 0) ? pushing - 4'd1 : 4'd0;
+      pushing <= (pushing > 0) ? pushing - 16'd1 : 16'd0;
     end
   end
 endmodule

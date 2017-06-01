@@ -4,12 +4,13 @@
 li 0 0
 li 2 4
 sll 2 8
-addi 2 2
--- $2 = 1025
+-- addi 2 1
+-- $2 = 1024
 st 2 0 0
 
 li 2 8
 sll 2 8
+--addi 2 9
 addi 2 -1
 st 2 128 0
 
@@ -25,12 +26,21 @@ addi 0 -1
 -- $1: left, $2: right
 ld 1 0 0
 ld 2 128 0
--- $3 pivot value: $r3 = a[left]
-ld 3 0 1
 
--- if left > right
+-- if left >= right
 cmp 2 1
 ble :partition
+
+-- $3 pivot value: $r3 = a[left]
+mov 4 2
+sub 4 1
+srl 4 1
+add 4 1
+ld 3 0 4
+ld 5 0 1
+st 3 0 1
+st 5 0 4
+
 
 -- $4 left value: $r4 = left + 1
 -- $5 right value: $r5 = right 
@@ -50,7 +60,7 @@ blt :find_right
 cmp 2 4
 blt :find_right
 addi 4 1
-b 0 -8
+b 0 :find_left
 
 :find_right
 ld 7 0 5
@@ -62,7 +72,7 @@ blt :swap
 cmp 5 1
 be :swap
 addi 5 -1
-b 0 -9
+b 0 :find_right
 
 :swap
 -- swap a[$r4] with a[$r5]
@@ -94,3 +104,36 @@ addi 0 1
 b 0 :partition
 
 :end
+
+-- output
+li 2 4
+sll 2 8
+
+addi 2 1
+ld 6 0 2
+addi 2 1
+ld 7 0 2
+out 6 7 0
+
+addi 2 1
+ld 6 0 2
+addi 2 1
+ld 7 0 2
+out 6 7 1
+
+addi 2 1
+ld 6 0 2
+addi 2 1
+ld 7 0 2
+out 6 7 2
+
+addi 2 1
+ld 6 0 2
+addi 2 1
+ld 7 0 2
+out 6 7 3
+
+--b 0 :printing
+
+nop
+hlt
