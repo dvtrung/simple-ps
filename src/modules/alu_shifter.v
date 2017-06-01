@@ -41,9 +41,9 @@ module alu_shifter(
     
   assign res = alu_res_[16:0];
   
-  function [3:0] alu_v;
+  function alu_v;
     input [3:0] op;
-    input signed [15:0] a, b, res;
+    input signed [15:0] a, b, res, ba;
   begin
     case (op)
       4'b0000: begin // ADD
@@ -52,12 +52,15 @@ module alu_shifter(
       4'b0001: begin // SUB
         alu_v = (a[15] != b[15]) & (res[15] != b[15]);
       end
+      4'b0101: begin // CMP
+        alu_v = (a[15] != b[15]) & (ba[15] != b[15]);
+      end
       default: alu_v = 1'bx;
     endcase
   end
   endfunction
   
-  assign szcv[0] = alu_res(op, a, b, res);
+  assign szcv[0] = alu_v(op, a, b, res, b - a);
   
   function [1:0] alu_sz;
     input [3:0] op;

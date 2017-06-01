@@ -4,7 +4,7 @@ module out (
   input [15:0] outval1,
   input [15:0] outval2,
   
-  input [2:0] outsel,
+  input [3:0] outsel,
   
   input outdisplay,
   
@@ -31,9 +31,6 @@ module out (
   reg [15:0] arr_outval1 [0:7];
   reg [15:0] arr_outval2 [0:7];
   
-  reg [15:0] outval1_;
-  reg [15:0] outval2_;
-  
   reg [2:0] outsel2;
   
   integer i;
@@ -58,10 +55,15 @@ module out (
       outdisplay_flag2[6] <= 0; outdisplay_flag2[7] <= 0;
     end else begin
       if (outdisplay) begin
-        arr_outval1[outsel] <= outval1;
-        outdisplay_flag1[outsel] <= 1;
-        arr_outval2[outsel] <= outval2;
-        outdisplay_flag2[outsel] <= 1;
+        if (outsel[0] == 0) begin
+          arr_outval1[outsel[3:1]] <= outval1;
+          outdisplay_flag1[outsel[3:1]] <= 1;
+        end else begin
+          arr_outval2[outsel[3:1]] <= outval1;
+          outdisplay_flag2[outsel[3:1]] <= 1;
+        end;
+        //arr_outval2[outsel] <= outval2;
+        //outdisplay_flag2[outsel] <= 1;
       end
       outsel2 <= outsel2 + 16'd1;
       

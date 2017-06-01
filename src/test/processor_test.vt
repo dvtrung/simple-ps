@@ -13,7 +13,7 @@ module processor_test();
   wire [11:0] ir_m_addr;
   wire ir_m_wren;
   
-  ram_inc #("../../memories/branch.mif") ir_ram_inc_ (
+  ram_inc #("../../memories/test_alu.mif") ir_ram_inc_ (
     .data(ir_m_data), .wren(ir_m_wren), .address(ir_m_addr),
     .clock(~clock),
     .q(ir_m_q)
@@ -68,11 +68,19 @@ module processor_test();
   wire [2:0] write_addr = processor_.register_.write_addr;
   wire [15:0] write_data = processor_.register_.write_data;
   
+  wire signed [15:0] bal_stack_0 = processor_.bal_stack[0];
+  wire signed [15:0] bal_stack_1 = processor_.bal_stack[1];
+  wire signed [3:0] bal_pos = processor_.bal_pos;
+  
   //wire [15:0] p5_MDR = processor_.p5_MDR;
   
   //wire signed [15:0] p3_D = processor_.p3_D;
-  //wire signed [15:0] a = processor_.alu_shifter_.a;
-  //wire signed [15:0] b = processor_.alu_shifter_.b;
+  wire signed [15:0] a = processor_.alu_shifter_.a;
+  wire signed [15:0] b = processor_.alu_shifter_.b;
+  wire szcv_blt = processor_.szcv_blt;
+  wire szcv_ble = processor_.szcv_ble;
+  wire ble = (processor_.p2_IR[15:8] == processor_.OP_CODE_BLE);
+  wire [3:0] SZCV = processor_.SZCV;
   
   
   initial begin
@@ -80,9 +88,9 @@ module processor_test();
     reset <= 1;
     # 40
     reset <= 0;
-    inpval1 <= 16'b0000000001011010;
-    inpval2 <= 16'b0000000000001010;
-    # 20000000
+    inpval1 <= 16'b1010;
+    inpval2 <= 16'b10;
+    # 20000
     $finish();
   end
 

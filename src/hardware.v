@@ -38,7 +38,7 @@ module hardware (
   
   wire exec;
   
-  wire [2:0] outsel;
+  wire [3:0] outsel;
   wire [15:0] outval1;
   wire [15:0] outval2;
   wire outdisplay;

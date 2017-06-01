@@ -17,7 +17,7 @@ module processor(
 
   output [15:0] outval1,     // output value
   output [15:0] outval2,
-  output [2:0] outsel,        // if output instruction
+  output [3:0] outsel,        // if output instruction
   output outdisplay,
   
   output reg halting
@@ -35,8 +35,8 @@ module processor(
   assign ir_m_data = 16'd0;
   
   reg stall = 0;
-  reg [15:0] bal_stack[0:15];
-  reg bal_pos = 0;
+  reg [15:0] bal_stack[0:7];
+  reg [3:0] bal_pos = 0;
     
   ///////////////////////////
   //   P1
@@ -178,7 +178,7 @@ module processor(
       end else if (p2_IR[15:11] == OP_CODE_BAL) begin
         flush_p1_p2 <= 1;
         p1_PC <= p2_PC + p2_D;
-        bal_stack[bal_pos] <= p2_PC;
+        bal_stack[bal_pos] <= p2_PC + 1;
         bal_pos <= bal_pos + 1;
       end else if (p2_IR[15:11] == OP_CODE_BR) begin
         flush_p1_p2 <= 1;
@@ -208,7 +208,7 @@ module processor(
   
   reg p4_RegWrite, p4_MemtoReg, p4_RegDst, p4_PCSrc;
   
-  reg [2:0] outsel_; reg outdisplay_;
+  reg [3:0] outsel_; reg outdisplay_;
   assign outsel = outsel_;
   assign outdisplay = outdisplay_;
   assign outval1 = p4_AR;
@@ -246,7 +246,7 @@ module processor(
       
     // Output
     if (is_output) /* OUT */ begin
-      outsel_ <= p3_IR[2:0];
+      outsel_ <= p3_IR[3:0];
       outdisplay_ <= 1;
     end else begin
       outdisplay_ <= 0;
