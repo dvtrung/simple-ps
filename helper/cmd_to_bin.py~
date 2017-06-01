@@ -28,6 +28,8 @@ CODE4 = {
   "li": "000",
   "addi": "001",
   "b": "100",
+  "bal": "110",
+  "bs": "101"
 }
 
 CODE5 = {
@@ -67,7 +69,7 @@ for i, line in lines:
 
   a = re.findall(r"[:-]?[\w']+", line)
   if len(a) >= 1 and ( a[0] in CODE1 or a[0] in CODE2 or a[0] == "in"  or
-    a[0] == "out" or a[0] == "hlt" or a[0] == "nop" or a[0] == "bal" or a[0] == "bs" or
+    a[0] == "out" or a[0] == "hlt" or a[0] == "nop" or
     a[0] in CODE3 or a[0] in CODE4 or a[0] in CODE5 ):
     count+=1
 
@@ -97,8 +99,8 @@ for i, line in lines:
     if a[0] == "in":
       res = "11" + "000" + dec_to_bin(a[1], 3) + "1100" + dec_to_bin(a[2], 4)
     if a[0] == "out":
-      assert len(a) == 3, "unmatchd args"
-      res = "11" + dec_to_bin(a[1], 3) + "000" + "1101" + dec_to_bin(a[2], 4)
+      assert len(a) == 4, "unmatchd args"
+      res = "11" + dec_to_bin(a[1], 3) + dec_to_bin(a[2], 3) + "1101" + dec_to_bin(a[3], 4)
     if a[0] == "hlt":
       assert len(a) == 1, "unmatchd args"
       res = ("1100000011110000");
@@ -108,10 +110,6 @@ for i, line in lines:
     if a[0] in CODE3:
       assert len(a) == 4, "unmatchd args"
       res = CODE3[a[0]] + dec_to_bin(a[3], 3) + dec_to_bin(a[1], 3) + dec_to_bin(a[2], 8)
-    if a[0] == "bal":
-      res = "10110000" + label_to_bin(a[1], 8, count)
-    if a[0] == "bs":
-      res = "1010100000000000"
     if a[0] in CODE4:
       assert len(a) == 3, "unmatchd args"
       res = "10" + CODE4[a[0]] + dec_to_bin(a[1], 3) + label_to_bin(a[2], 8, count)
