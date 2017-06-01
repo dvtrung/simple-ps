@@ -69,9 +69,8 @@ be :compare_end
 st 6 0 3
 
 -- w++, r++
-li 7 1
-add 3 7
-add 2 7
+addi 3 1
+addi 2 1
 
 b 0 :compare
 
@@ -81,9 +80,8 @@ b 0 :compare
 st 5 0 3
 
 -- w++, l++
-li 7 1
-add 3 7
-add 1 7
+addi 3 1
+addi 1 1
 
 -- :compare
 b 0 :compare

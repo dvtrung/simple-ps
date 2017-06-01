@@ -4,7 +4,7 @@
 // MODULE: altsyncram 
 
 // ============================================================
-// File Name: ram_inc.v
+// File Name: ram_main.v
 // Megafunction Name(s):
 // 			altsyncram
 //
@@ -31,7 +31,7 @@
 //Altera or its authorized distributors.  Please refer to the 
 //applicable agreement for further details.
 
-module ram_inc (
+module ram_main (
 	address,
 	clock,
 	data,
@@ -73,9 +73,9 @@ endmodule
 // Retrieval info: PRIVATE: INIT_TO_SIM_X NUMERIC "0"
 // Retrieval info: PRIVATE: INTENDED_DEVICE_FAMILY STRING "Cyclone IV E"
 // Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "1"
-// Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
+// Retrieval info: PRIVATE: JTAG_ID STRING "main"
 // Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
-// Retrieval info: PRIVATE: MIFfilename STRING "merge_sort.mif"
+// Retrieval info: PRIVATE: MIFfilename STRING "../memories/random.mif"
 // Retrieval info: PRIVATE: NUMWORDS_A NUMERIC "4096"
 // Retrieval info: PRIVATE: RAM_BLOCK_TYPE NUMERIC "0"
 // Retrieval info: PRIVATE: READ_DURING_WRITE_MODE_PORT_A NUMERIC "3"
@@ -92,9 +92,9 @@ endmodule
 // Retrieval info: LIBRARY: altera_mf altera_mf.altera_mf_components.all
 // Retrieval info: CONSTANT: CLOCK_ENABLE_INPUT_A STRING "BYPASS"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_A STRING "BYPASS"
-// Retrieval info: CONSTANT: INIT_FILE STRING "merge_sort.mif"
+// Retrieval info: CONSTANT: INIT_FILE STRING "../memories/random.mif"
 // Retrieval info: CONSTANT: INTENDED_DEVICE_FAMILY STRING "Cyclone IV E"
-// Retrieval info: CONSTANT: LPM_HINT STRING "ENABLE_RUNTIME_MOD=YES,INSTANCE_NAME=NONE"
+// Retrieval info: CONSTANT: LPM_HINT STRING "ENABLE_RUNTIME_MOD=YES,INSTANCE_NAME=main"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "altsyncram"
 // Retrieval info: CONSTANT: NUMWORDS_A NUMERIC "4096"
 // Retrieval info: CONSTANT: OPERATION_MODE STRING "SINGLE_PORT"
@@ -115,10 +115,10 @@ endmodule
 // Retrieval info: CONNECT: @data_a 0 0 16 0 data 0 0 16 0
 // Retrieval info: CONNECT: @wren_a 0 0 0 0 wren 0 0 0 0
 // Retrieval info: CONNECT: q 0 0 16 0 @q_a 0 0 16 0
-// Retrieval info: GEN_FILE: TYPE_NORMAL ram_inc.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL ram_inc.inc FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL ram_inc.cmp FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL ram_inc.bsf TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL ram_inc_inst.v FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL ram_inc_bb.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL ram_main.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL ram_main.inc FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL ram_main.cmp FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL ram_main.bsf FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL ram_main_inst.v FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL ram_main_bb.v TRUE
 // Retrieval info: LIB_FILE: altera_mf

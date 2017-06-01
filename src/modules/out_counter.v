@@ -45,11 +45,11 @@ module out_counter(
   
   reg [1:0] show_c;
   reg [7:0] led1_;
-  always @(posedge clock) begin
+  always @(posedge clock or posedge reset) begin
     if (reset) begin
       disp_led1 <= 0;
       counter <= 0;
-      show_c <= 0;
+      show_c <= 1;
     end else begin
       disp_led1 <= 1;
       show_c <= show_c + 2'd1;
@@ -58,10 +58,10 @@ module out_counter(
       end
     end
     case (show_c)
-      3: led1_ <= leds[1];
-      0: led1_ <= leds[2];
-      1: led1_ <= leds[3];
-      2: led1_ <= leds[4];
+      0: led1_ <= leds[1];
+      1: led1_ <= leds[2];
+      2: led1_ <= leds[3];
+      3: led1_ <= leds[4];
     endcase
   end
   

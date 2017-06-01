@@ -9,7 +9,8 @@
 `include "../modules/register.v"
 `include "../modules/out_counter.v"
 `include "../modules/seg7.v"
-`include "../devices/ram_inc.v"
+`include "../modules/ram_ir.v"
+`include "../modules/ram_main.v"
 
 module hardware_test();
   reg clock, reset;
@@ -55,12 +56,16 @@ module hardware_test();
   wire outdisplay_flag2_ = hardware_.out_.outdisplay_flag2_;
   
   initial begin
-    clock = 0;
-    reset = 1;
-    #30
-    reset = 0;
-    #30
-    reset = 1;
+    clock <= 0;
+    reset <= 1;
+    #22
+    reset <= 0;
+    #22
+    reset <= 1;
+    #1000
+    reset <= 0;
+    #22
+    reset <= 1;
     #50000
     $display("TEST FINSHED in %m");
     $finish();

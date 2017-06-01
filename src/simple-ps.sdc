@@ -19,7 +19,7 @@
 ## PROGRAM "Quartus II"
 ## VERSION "Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version"
 
-## DATE    "Thu May 25 13:29:51 2017"
+## DATE    "Fri May 26 16:26:54 2017"
 
 ##
 ## DEVICE  "EP4CE30F23I7"
@@ -38,7 +38,9 @@ set_time_format -unit ns -decimal_places 3
 # Create Clock
 #**************************************************************
 
+create_clock -name {altera_reserved_tck} -period 100.000 -waveform { 0.000 50.000 } [get_ports {altera_reserved_tck}]
 create_clock -name {clk} -period 20.000 -waveform { 0.000 10.000 } [get_ports {clock}]
+create_clock -name {duty} -period 10.000 -waveform { 0.000 4.000 } 
 
 
 #**************************************************************
@@ -75,6 +77,8 @@ create_clock -name {clk} -period 20.000 -waveform { 0.000 10.000 } [get_ports {c
 # Set Clock Groups
 #**************************************************************
 
+set_clock_groups -asynchronous -group [get_clocks {altera_reserved_tck}] 
+set_clock_groups -asynchronous -group [get_clocks {altera_reserved_tck}] 
 
 
 #**************************************************************

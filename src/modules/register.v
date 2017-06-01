@@ -7,12 +7,17 @@ module register (
   );
 
   reg [15:0] r [0:7];
-  integer i;
 
   always @(posedge clock or posedge reset) begin
     if (reset) begin
-      for (i = 0; i < 8 ; i = i + 1)
-        r[i] <= 16'b0;
+      r[7] <= 16'b0;
+      r[6] <= 16'b0;
+      r[5] <= 16'b0;
+      r[4] <= 16'b0;
+      r[3] <= 16'b0;
+      r[2] <= 16'b0;
+      r[1] <= 16'b0;
+      r[0] <= 16'b0;
     end else begin
       if (RegWrite) begin
         r[write_addr] = write_data;
