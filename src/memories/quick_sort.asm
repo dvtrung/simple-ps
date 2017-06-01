@@ -2,17 +2,40 @@
 -- left 0..15
 -- right 16..31
 li 0 0
-li 2 4
-sll 2 8
+li 1 4
+sll 1 8
 -- addi 2 1
 -- $2 = 1024
-st 2 0 0
+st 1 0 0
 
 li 2 8
 sll 2 8
 --addi 2 9
 addi 2 -1
 st 2 128 0
+
+:bubble_sort
+mov 3 1
+li 7 0
+li 0 0
+
+-- r0: swapped?, r3: i
+:bbs_loop
+mov 4 3
+ld 5 0 4
+addi 3 1
+ld 6 0 3
+cmp 3 2
+be :end_bubble
+cmp 5 6
+ble :bbs_loop
+li 0 1
+st 5 0 3
+st 6 0 4
+:end_bubble
+
+cmp 0 7
+be :end
 
 li 0 1
 

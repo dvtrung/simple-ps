@@ -14,7 +14,7 @@ module hardware (
   
   reg reset;
   
-  wire use_clock = clock;
+  wire use_clock = f_clock;
   
   wire [15:0] ir_m_data, ir_m_q;
   wire [11:0] ir_m_addr;

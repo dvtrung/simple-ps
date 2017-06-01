@@ -24,11 +24,13 @@ module processor(
   );
   
   localparam [15:0] NOP = 16'b11_110_000_1110_1111;
+  
   localparam [7:0] OP_CODE_BE = 8'b10111000;
   localparam [7:0] OP_CODE_BLT = 8'b10111001;
   localparam [7:0] OP_CODE_BLE = 8'b10111010;
   localparam [7:0] OP_CODE_BNE = 8'b10111011;
   localparam [4:0] OP_CODE_B = 5'b10100;
+  localparam [4:0] OP_CODE_BX = 5'b10111;
   localparam [4:0] OP_CODE_BAL = 5'b10110;
   localparam [4:0] OP_CODE_BR = 5'b10101;
   
@@ -160,32 +162,53 @@ module processor(
   wire szcv_ble = (SZCV[2] || (SZCV[3] ^ SZCV[0]));
   wire szcv_bne = ~ SZCV[2];
   
+  wire jump_cond = (
+    ( (p2_IR[15:8] == OP_CODE_BE ) & szcv_be  ) ||
+    ( (p2_IR[15:8] == OP_CODE_BLT) & szcv_blt ) ||
+    ( (p2_IR[15:8] == OP_CODE_BLE) & szcv_ble ) ||
+    ( (p2_IR[15:8] == OP_CODE_BNE) & szcv_bne ) );
+    
   always @(posedge clock or posedge reset) begin
     if (reset) begin
       p1_PC <= 0;
       flush_p1_p2 <= 0;
       halting <= 0;
     end else if (~stall_ & ~halting) begin
-      if ((~flush_p1_p2) & (
-          ( p2_IR[15:11] == OP_CODE_B ) ||
-          ( (p2_IR[15:8] == OP_CODE_BE ) & szcv_be  ) ||
-          ( (p2_IR[15:8] == OP_CODE_BLT) & szcv_blt ) ||
-          ( (p2_IR[15:8] == OP_CODE_BLE) & szcv_ble ) ||
-          ( (p2_IR[15:8] == OP_CODE_BNE) & szcv_bne ) ) )
-      begin
-        p1_PC <= p2_PC + p2_D;
-        flush_p1_p2 <= 1;
-      end else if (p2_IR[15:11] == OP_CODE_BAL) begin
-        flush_p1_p2 <= 1;
-        p1_PC <= p2_PC + p2_D;
-        bal_stack[bal_pos] <= p2_PC;
-        bal_pos <= bal_pos + 1;
-      end else if (p2_IR[15:11] == OP_CODE_BR) begin
-        flush_p1_p2 <= 1;
-        p1_PC <= bal_stack[bal_pos - 1];
-        bal_pos <= bal_pos - 1;
-      end else if (p3_Halt) begin
-        halting <= 1;
+      if (~flush_p1_p2) begin
+        if (p3_Halt) begin
+          halting <= 1;
+        end else begin
+          case (p2_IR[15:11])
+            OP_CODE_B: begin
+              p1_PC <= p2_PC + p2_D;
+              flush_p1_p2 <= 1;
+            end
+            OP_CODE_BX: if (jump_cond) begin
+              p1_PC <= p2_PC + p2_D;
+              flush_p1_p2 <= 1;
+            end else begin
+              p1_PC <= p1_PC + 1;
+              flush_p1_p2 <= 0;
+            end
+            /*//This is a critical path.
+            OP_CODE_BAL: begin
+              flush_p1_p2 <= 1;
+              p1_PC <= p2_PC + p2_D;
+              bal_stack[bal_pos] <= p2_PC;
+              bal_pos <= bal_pos + 1;
+            end
+            OP_CODE_BR: begin
+              flush_p1_p2 <= 1;
+              p1_PC <= bal_stack[bal_pos - 1];
+              bal_pos <= bal_pos - 1;
+            end
+            */
+            default: begin
+              p1_PC <= p1_PC + 1;
+              flush_p1_p2 <= 0;
+            end
+          endcase
+        end
       end else begin
         p1_PC <= p1_PC + 1;
         flush_p1_p2 <= 0;
