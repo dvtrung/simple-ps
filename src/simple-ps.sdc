@@ -39,7 +39,7 @@ set_time_format -unit ns -decimal_places 3
 #**************************************************************
 
 create_clock -name {altera_reserved_tck} -period 100.000 -waveform { 0.000 50.000 } [get_ports {altera_reserved_tck}]
-create_clock -name {clk} -period 10.000 -waveform { 0.000 3.00 } [get_ports {clock}]
+create_clock -name {clk} -period 15.000 -waveform { 0.000 4.95 } [get_ports {clock}]
 
 #**************************************************************
 # Create Generated Clock
