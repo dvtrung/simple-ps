@@ -61,7 +61,7 @@ module out (
         end else begin
           arr_outval2[outsel[3:1]] <= outval1;
           outdisplay_flag2[outsel[3:1]] <= 1;
-        end;
+        end
         //arr_outval2[outsel] <= outval2;
         //outdisplay_flag2[outsel] <= 1;
       end
