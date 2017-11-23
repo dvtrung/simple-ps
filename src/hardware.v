@@ -55,7 +55,7 @@ module hardware (
     .halting(halting));
   
   out out_ (.clock(use_clock), .reset(reset),
-            .outval1(outval1), .outval2(outval2), .outsel(outsel), .outdisplay(outdisplay),
+            .outval1(outval1), .outsel(outsel), .outdisplay(outdisplay),
             .led0(led0), .led1(led1),
             .led2(led2), .led3(led3),
             .led4(led4), .led5(led5),

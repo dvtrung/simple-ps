@@ -2,7 +2,6 @@ module out (
   input clock, reset,
   
   input [15:0] outval1,
-  input [15:0] outval2,
   
   input [3:0] outsel,
   
@@ -62,8 +61,6 @@ module out (
           arr_outval2[outsel[3:1]] <= outval1;
           outdisplay_flag2[outsel[3:1]] <= 1;
         end
-        //arr_outval2[outsel] <= outval2;
-        //outdisplay_flag2[outsel] <= 1;
       end
       outsel2 <= outsel2 + 16'd1;
     end

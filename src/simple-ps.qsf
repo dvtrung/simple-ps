@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "Cyclone IV E"
 set_global_assignment -name DEVICE EP4CE30F23I7
-set_global_assignment -name TOP_LEVEL_ENTITY hardware
+set_global_assignment -name TOP_LEVEL_ENTITY out
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "12:26:03  APRIL 20, 2017"
 set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
@@ -173,9 +173,6 @@ set_global_assignment -name QIP_FILE devices/ram_inc.qip
 set_global_assignment -name VERILOG_FILE modules/processor.v
 set_global_assignment -name VERILOG_FILE modules/out.v
 set_global_assignment -name VERILOG_FILE modules/seg7.v
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_location_assignment PIN_A10 -to inpval1[15]
 set_location_assignment PIN_B10 -to inpval1[14]
 set_location_assignment PIN_C10 -to inpval1[13]
@@ -244,4 +241,7 @@ set_global_assignment -name CDF_FILE memories/Chain2.cdf
 set_global_assignment -name QIP_FILE modules/ram_ir.qip
 set_global_assignment -name QIP_FILE modules/ram_main.qip
 set_global_assignment -name CDF_FILE memories/Chain1.cdf
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
